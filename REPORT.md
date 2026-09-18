@@ -50,5 +50,5 @@ Agenda: Problem Defintion
 | Bushra Alkhateeb | Create a suitable problem definition | Complete  | Define project objectives |
 |  Deran Cross        |    Create a suitable problem definition      | Complete         |  Define project constraints       |
 
-# 5	Project Management
+# 5.	Project Management
 Provide a Gantt chart showing the progress of your work here. Mention all the tasks along with their predecessors. Provide the slack time of each task and identify the critical path.

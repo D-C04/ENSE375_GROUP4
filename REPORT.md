@@ -51,4 +51,4 @@ Agenda: Problem Defintion
 |  Deran Cross        |    Create a suitable problem definition      | Complete         |  Define project constraints       |
 
 # 5.	Project Management
-Provide a Gantt chart showing the progress of your work here. Mention all the tasks along with their predecessors. Provide the slack time of each task and identify the critical path.
+<img width="1317" height="332" alt="Screenshot 2026-09-17 213251" src="https://github.com/user-attachments/assets/06205cf1-0244-4c77-8481-19ffd137a82b" />

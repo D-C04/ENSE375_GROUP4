@@ -2,20 +2,23 @@
 
 # ENSE 375 – Software Testing and Validation
 
-# HABITS TRACKER
+<div align="center">
+<h1> <b> HABITS TRACKER </b> </h1>
+</div>  
 
-# Team Members
+## Team Members
 #### Abrianna Primavera (200504635)
 #### Bushra Alkhateeb (200525581)
 ####  Deran Cross (200513336)
 
 ## Table of Contents
-### 1... Introduction
+
 ### 2 ...Design Problem
 - 2.1 Problem Definition
 
-# 1 Introduction
-
 # 2.	Design Problem  
-2.1	Problem Definition  
-[insert]
+2.1	Problem Definition    
+
+Balancing hobbies and everyday necessities is a difficult task for many individuals due to several factors, including being unable to measure growth, maintain focus or manage resources.   
+
+This application will allow users to have an instinctive way to track the hours spent on a hobby, have visual representation of their progress as well as provide hobby specific milestones and resources.

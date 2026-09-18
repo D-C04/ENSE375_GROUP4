@@ -1,4 +1,4 @@
-# ENSE375 GROUP4
+# Habit Tracker
 This repository contains all files related to the ENSE 375 Fall 2026 group project
 
 ## REPORT.md

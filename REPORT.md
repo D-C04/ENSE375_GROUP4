@@ -152,7 +152,7 @@ Agenda: Problem Defintion
 ## 4.3	...Meeting 3  
 
 Time: September 23, 2026, 3:45 pm to 4:20 pm  
-Agenda: discuss project functions, objectives and constraints
+Agenda: Discuss project functions, objectives and constraints
 | Team Member | Previous Task | Completion State | Next Task |
 |----------|----------|----------|----------|
 | Abrianna Primavera   | Define project functions | Complete  | Brainstorm solutions |

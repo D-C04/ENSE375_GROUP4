@@ -62,5 +62,16 @@ Agenda: Problem Defintion
 | Bushra Alkhateeb | Create a suitable problem definition | Complete  | Define project objectives |
 |  Deran Cross        |    Create a suitable problem definition      | Complete         |  Define project constraints       |
 
+## 4.3	...Meeting 3  
+
+Time: September 23, 2026, 3:45 pm to 4:20 pm  
+Agenda: discuss project functions, objectives and constraints
+| Team Member | Previous Task | Completion State | Next Task |
+|----------|----------|----------|----------|
+| Abrianna Primavera   | Define project functions | Complete  | Brainstorm solutions |
+| Bushra Alkhateeb | Define project objectives | Complete  | Brainstorm solutions |
+|  Deran Cross        |    Define project constraints       | Complete         | Brainstorm solutions |
+
+
 # 5.	Project Management
 <img width="1317" height="332" alt="Screenshot 2026-09-17 213251" src="https://github.com/user-attachments/assets/06205cf1-0244-4c77-8481-19ffd137a82b" />

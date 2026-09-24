@@ -15,6 +15,10 @@
 
 ### 2 ...Design Problem
 - 2.1 Problem Definition
+- 2.2 Design Requirements  
+  - 2.2.1 Functions
+  - 2.2.2 Objectives
+  - 2.2.3 Constraints
 
 ### 4 ...Team Work
 - 4.1 Meeting 1 : Brainstorming
@@ -23,11 +27,19 @@
 ### 5 ...Project Management
 
 # 2.	Design Problem  
-2.1	Problem Definition    
+## 2.1	Problem Definition    
 
 Balancing hobbies and everyday necessities is a difficult task for many individuals due to several factors, including being unable to measure growth, maintain focus or manage resources.   
 
-This application will allow users to have an instinctive way to track the hours spent on a hobby, have visual representation of their progress as well as provide hobby specific milestones and resources.
+This application will allow users to have an instinctive way to track the hours spent on a hobby, have visual representation of their progress as well as provide hobby specific milestones and resources.  
+
+## 2.2 Design Requirements  
+
+### 2.2.1 Functions 
+
+### 2.2.2 Objectives 
+
+### 2.2.3 Constraints  
 
 # 4.	Team Work
 ## 4.1	...Meeting 1  

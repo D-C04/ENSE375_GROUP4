@@ -161,4 +161,7 @@ Agenda: Discuss project functions, objectives and constraints
 
 
 # 5.	Project Management
-<img width="1317" height="332" alt="Screenshot 2026-09-17 213251" src="https://github.com/user-attachments/assets/06205cf1-0244-4c77-8481-19ffd137a82b" />
+
+Here is a link to our Gantt Chart which showcases the progress of our work:(https://1drv.ms/x/c/2547ef4451b03ad2/IQB8uDNAQz0YT7Q_k9PeiQKWARacsVqA9pwwGyO-VtNzUmY?e=3EBakP)
+
+

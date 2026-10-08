@@ -31,7 +31,7 @@
 - 4.3 Meeting 3 : Project Functions, Objectives and Constraints
 - 4.4 Meeting 4 :  Discuss Possible Project Solutions
 - 4.5 Meeting 5 : Outline and Finalize Solutions
-- 4.5 Meeting 6 : Complete MVCs, Discuss Implementation and GitHub Update
+- 4.6 Meeting 6 : Complete MVCs, Discuss Implementation and GitHub Update
 
 ### 5 ...Project Management
 

@@ -19,10 +19,19 @@
   - 2.2.1 Functions
   - 2.2.2 Objectives
   - 2.2.3 Constraints
+ 
+### 3 ... Solution
+- 3.1 Solution 1
+- 3.2 Solution 2
+- 3.3 Final Solution
 
 ### 4 ...Team Work
 - 4.1 Meeting 1 : Brainstorming
 - 4.2 Meeting 2 : Problem Definition
+- 4.3 Meeting 3 : Project Functions, Objectives and Constraints
+- 4.4 Meeting 4 :  Discuss Possible Project Solutions
+- 4.5 Meeting 5 : Outline and Finalize Solutions
+- 4.5 Meeting 6 : Complete MVCs, Discuss Implementation and GitHub Update
 
 ### 5 ...Project Management
 
@@ -127,6 +136,15 @@ Due to tight schedules of team members, and a tight time frame between the month
 #### Knowledge
 Our knowledge regarding software and use of technology stacks will be a great constraint here, because we are constricted to using our previous knowledge and programming abilities we attained from previous classes and experience to build our project.
 
+# 3. Solution
+### 3.1 ... Solution 1  
+(insert here)  
+
+### 3.2 ... Solution 2  
+(insert here)  
+
+### 3.3 ... Final Solution  
+(insert here)
 
 # 4.	Team Work
 ## 4.1	...Meeting 1  
@@ -159,6 +177,35 @@ Agenda: Discuss project functions, objectives and constraints
 | Bushra Alkhateeb | Define project objectives | Complete  | Brainstorm solutions |
 |  Deran Cross        |    Define project constraints       | Complete         | Brainstorm solutions |
 
+## 4.4	...Meeting 4  
+
+Time: October 2, 2026, 3:30 pm to 4:30 pm  
+Agenda: Discuss possible project solutions
+| Team Member | Previous Task | Completion State | Next Task |
+|----------|----------|----------|----------|
+| Abrianna Primavera   | Brainstorm solutions | Complete  | Create UML Class Diagrams for Solutions |
+| Bushra Alkhateeb | Brainstorm solutions | Complete  | Create UML Class Diagrams for Solutions |
+|  Deran Cross        |    Brainstorm solutions       | Complete         | Define Solution Testing Deficiencies |
+
+## 4.3	...Meeting 5  
+
+Time: October 7, 2026, 1:00 pm to 2:15 pm  
+Agenda: Outline and Finalize Solutions
+| Team Member | Previous Task | Completion State | Next Task |
+|----------|----------|----------|----------|
+| Abrianna Primavera   | Create UML Class Diagrams for Solutions | Complete  | Create MVC Diagram |
+| Bushra Alkhateeb | Create UML Class Diagrams for Solutions | Complete  | Create MVC Diagram |
+|  Deran Cross        |    Define Solution Testing Deficiencies      | Complete        | Create MVC Diagram |  
+
+## 4.3	...Meeting 6    
+
+Time: October 8, 2026 10:30 am to 11: 15 am  
+Agenda:  Complete MVCs, Discuss Implementation and GitHub Update
+| Team Member | Previous Task | Completion State | Next Task |
+|----------|----------|----------|----------|
+| Abrianna Primavera   | Create MVC Diagram | Complete  | Final Design Implementation and Testing |
+| Bushra Alkhateeb | Create MVC Diagram  | Complete  | Final Design Implementation and Testing |
+|  Deran Cross        |    Create MVC Diagram       | Complete         | Final Design Implementation and Testing |  
 
 # 5.	Project Management
 

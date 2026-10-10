@@ -138,6 +138,7 @@ Our knowledge regarding software and use of technology stacks will be a great co
 
 # 3. Solution
 ### 3.1 ... Solution 1   
+<img width="1728" height="2304" alt="CAC47AC5-5163-43F3-B4BE-656F08470DD3" src="https://github.com/user-attachments/assets/a8695476-4cf7-4272-be9b-347a0d0b1c02" />
 
 Solution 1 is a task tracker built with minimal features: users can add hobbies, mark daily completion, and view daily
 achievements. The layout relies on basic input validation and data storage. This prototype is simple and meets some feature requirements, but it is not very robust.  
@@ -162,6 +163,8 @@ Difficulties arise due to input classes not being properly defined
 This solution was functional but not test friendly enough to be used as a final solution.  
 
 ### 3.2 ... Solution 2  
+<img width="1728" height="2304" alt="994066D1-BF00-4308-B5EA-6F2151F5A9CD" src="https://github.com/user-attachments/assets/2ee200d8-346c-4e61-8871-7a4815f54d2a" /> 
+
 Solution 2 is an enhanced task tracker design that allows for user validation, status and statistics tracking, an analytical dashboard and achievement tracking. Other functionalities include an edit and delete functionality.   
 
 Solution 2 addresses the issues outlined in Solution one in various one.

@@ -226,7 +226,7 @@ Agenda: Discuss possible project solutions
 | Bushra Alkhateeb | Brainstorm solutions | Complete  | Create UML Class Diagrams for Solutions |
 |  Deran Cross        |    Brainstorm solutions       | Complete         | Define Solution Testing Deficiencies |
 
-## 4.3	...Meeting 5  
+## 4.5	...Meeting 5  
 
 Time: October 7, 2026, 1:00 pm to 2:15 pm  
 Agenda: Outline and Finalize Solutions
@@ -236,7 +236,7 @@ Agenda: Outline and Finalize Solutions
 | Bushra Alkhateeb | Create UML Class Diagrams for Solutions | Complete  | Create MVC Diagram |
 |  Deran Cross        |    Define Solution Testing Deficiencies      | Complete        | Create MVC Diagram |  
 
-## 4.3	...Meeting 6    
+## 4.6	...Meeting 6    
 
 Time: October 8, 2026 10:30 am to 11: 15 am  
 Agenda:  Complete MVCs, Discuss Implementation and GitHub Update

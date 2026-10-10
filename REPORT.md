@@ -137,14 +137,53 @@ Due to tight schedules of team members, and a tight time frame between the month
 Our knowledge regarding software and use of technology stacks will be a great constraint here, because we are constricted to using our previous knowledge and programming abilities we attained from previous classes and experience to build our project.
 
 # 3. Solution
-### 3.1 ... Solution 1  
-(insert here)  
+### 3.1 ... Solution 1   
+
+Solution 1 is a task tracker built with minimal features: users can add hobbies, mark daily completion, and view daily
+achievements. The layout relies on basic input validation and data storage. This prototype is simple and meets some feature requirements, but it is not very robust.  
+  
+The reasons for not selecting this solution include the following  
+
+#### - Boundary Value Testing  
+The design was not made with the idea of restricting input on time, hobbies  
+
+#### - Unit testing is difficult  
+Due to the design simplicity, multiple sections, such as achievements, make unit testing difficult as their behaviours were too tightly depended on other sections of the design  
+
+#### -  Limited error handling paths  
+The prototype lacked a structure that would allow for multiple user errors to be tested. Error paths mainly arose through user validation and not data input.  
+
+#### - State Transition Testing  
+Undefined state transitions make this type of testing difficult. The status of hobbies is simplified to ‘Not Started’ and ‘Completed’ with no real design outlining transition rules  
+
+#### - Equivalence Class Testing  
+Difficulties arise due to input classes not being properly defined
+
+This solution was functional but not test friendly enough to be used as a final solution.  
 
 ### 3.2 ... Solution 2  
-(insert here)  
+Solution 2 is an enhanced task tracker design that allows for user validation, status and statistics tracking, an analytical dashboard and achievement tracking. Other functionalities include an edit and delete functionality.   
+
+Solution 2 addresses the issues outlined in Solution one in various one.
+
+#### - More Modular Features
+The difficulties in unit and equivalence class testing are addressed due to Solution 2 being able to be separated in different modules. For example: Hobby Management, Activity Logging. Progress Tracking, etc. This design allows for better boundary value testing for areas such as user account creation and login, as well as activity logging.   
+
+#### - Clearer Data Flow  
+The design allows for better integration testing and error handling in comparison to Solution 1 because the path of data flow is outlined and designed more comprehensively.  
+
+#### - More Consistent State Transitions  
+Solution 2 allows for dedicated modules dedicated to the status of user activities or tasks with defined transitions
+
+Solution 2, however, still has deficiencies. Some dependiencies still exist between modules, such as logging activites, tracking progress and analytics.
+
 
 ### 3.3 ... Final Solution  
-(insert here)
+The final solution is outlined with MVC architecture and sufficiently addresses the deficiencies in both Solutions 1 and 2.  
+Solution three allows for well defined units, reducing dependencies and therefore supports more comprehensive testing.
+
+#### - Shared Data Layer  
+With the idea of a supporting database and the MVC architecture, Solution 3 decouples modules and allows for activity logging, achievements and analytics to be tested without involving each other.  
 
 # 4.	Team Work
 ## 4.1	...Meeting 1  

@@ -179,6 +179,8 @@ Solution 2, however, still has deficiencies. Some dependiencies still exist betw
 
 
 ### 3.3 ... Final Solution  
+<img width="958" height="721" alt="IMG_4785" src="https://github.com/user-attachments/assets/7098b792-552d-4edc-bc4c-0b5e475b65cb" />
+
 The final solution is outlined with MVC architecture and sufficiently addresses the deficiencies in both Solutions 1 and 2.  
 Solution three allows for well defined units, reducing dependencies and therefore supports more comprehensive testing.
 

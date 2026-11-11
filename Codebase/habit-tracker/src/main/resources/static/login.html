@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My App</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  
+  
+<h3>Start Tracking Habits!</h3>
+
+<form method="post" action="/login">
+<div class="input-container">
+<h4> Login!</h4> <p>Don't have an account?<a href="CreateAccount.html">Create One!</a>
+
+<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label-1" color="white">Username*</label>
+  <input type="email" class="form-control-1" id="exampleFormControlInput1" placeholder="Username">
+</div>
+
+<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label-2" color="white">Password*</label>
+  <input type="email" class="form-control-2" id="exampleFormControlInput1" placeholder="Password">
+</div>
+
+<button type="submit" class="btn btn-primary mb-3">Log In!</button>
+
+</div>
+</form>
+<script>
+  const p = new URLSearchParams(location.search);
+  if (p.has('error')) msg.textContent = 'invalid username or password.';
+  if (p.has('created')) msg.textContent = 'Account created. log in.';
+</script>
+</body>
+</html>

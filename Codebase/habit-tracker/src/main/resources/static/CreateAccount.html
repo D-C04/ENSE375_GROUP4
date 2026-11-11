@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My App</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  
+  
+<h5>Start Tracking Habits!</h5>
+
+
+
+<div class="input-container2">
+<h4> Sign Up!</h4> <p>Already have an account?<a href="login.html">Log In!</a>
+
+<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label-1" color="white">Username*</label>
+  <input type="email" class="form-control-1" id="exampleFormControlInput1" placeholder="Username">
+</div>
+
+<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label-2" color="white">Password*</label>
+  <input type="email" class="form-control-2" id="exampleFormControlInput1" placeholder="Password">
+</div>
+
+<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label-3" color="white">Email Address*</label>
+  <input type="email" class="form-control-3" id="exampleFormControlInput1" placeholder="Email Address">
+</div>
+
+<button type="submit" class="button2">Sign Up!</button>
+
+</div>
+
+<script>
+  if (new URLSearchParams(location.search).has('error'))
+    msg.textContent = 'Could not create account (username taken or password too short).';
+</script>
+</body>
+</html>

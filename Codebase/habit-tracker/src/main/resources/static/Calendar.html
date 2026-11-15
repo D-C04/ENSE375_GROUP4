@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar | Habit Tracker</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styleCalendar.css">
+</head>
+<body class="calendar-page">
+    <header class="logout-header profile-header calendar-header">
+        <span class="logout-heart" aria-hidden="true">&hearts;</span>
+        <span>Habit Tracker</span>
+        <nav class="profile-nav" aria-label="Main navigation">
+            <a href="Dashboard.html">Dashboard</a>
+            <a href="Calendar.html" aria-current="page">Calendar</a>
+            <a href="Statistics.html">Statistics</a>
+        </nav>
+        <span class="profile-user-icon" aria-hidden="true"></span>
+    </header>
+
+    <main class="calendar-content">
+        <section class="calendar-card" aria-label="Calendar">
+            <div class="calendar-month-bar">
+                <button class="calendar-month-button" id="previous-month" type="button" aria-label="Previous month">&lsaquo;</button>
+                <h1 id="calendar-month" aria-live="polite">Loading calendar...</h1>
+                <button class="calendar-month-button" id="next-month" type="button" aria-label="Next month">&rsaquo;</button>
+            </div>
+            <table class="calendar-grid" aria-label="Days in the selected month">
+                <thead>
+                    <tr>
+                        <th scope="col">Sun</th>
+                        <th scope="col">Mon</th>
+                        <th scope="col">Tue</th>
+                        <th scope="col">Wed</th>
+                        <th scope="col">Thu</th>
+                        <th scope="col">Fri</th>
+                        <th scope="col">Sat</th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-days"></tbody>
+            </table>
+            <p class="calendar-error" id="calendar-error" role="alert" hidden></p>
+        </section>
+
+        <section class="day-history" aria-labelledby="day-history-title">
+            <h2 id="day-history-title">Day History <span id="selected-date"></span></h2>
+            <div class="history-card">
+                <div class="history-status" role="group" aria-label="Day status">
+                    <button class="status-button is-active" type="button" aria-pressed="true">Completed</button>
+                    <button class="status-button" type="button" aria-pressed="false">Not Completed</button>
+                    <button class="status-button" type="button" aria-pressed="false">Final Day</button>
+                </div>
+                <h3>All Day</h3>
+                <button class="habit-row is-complete" type="button" aria-pressed="true">
+                    <span>Drink water | 2 litres</span><span class="habit-check" aria-hidden="true"></span>
+                </button>
+                <h3>Morning</h3>
+                <button class="habit-row is-complete" type="button" aria-pressed="true">
+                    <span>Read | 15 min</span><span class="habit-check" aria-hidden="true"></span>
+                </button>
+                <button class="habit-row is-complete" type="button" aria-pressed="true">
+                    <span>Read | 15 min</span><span class="habit-check" aria-hidden="true"></span>
+                </button>
+                <button class="habit-row is-complete" type="button" aria-pressed="true">
+                    <span>Read | 15 min</span><span class="habit-check" aria-hidden="true"></span>
+                </button>
+            </div>
+        </section>
+
+        <section class="calendar-notes" aria-labelledby="calendar-notes-title">
+            <h2 id="calendar-notes-title">Notes</h2>
+            <textarea aria-label="Notes for the selected day">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ornare eros ac varius mattis. Integer ultrices enim in est imperdiet ultricies. Cras sit amet odio ut quam mattis laoreet. Praesent eleifend felis nec efficitur efficitur. Vestibulum justo enim, fermentum vitae lacus a, venenatis luctus quam. Phasellus sollicitudin, urna eu consectetur congue, metus mauris hendrerit nunc, nec lacinia leo dui ac ligula. Proin bibendum, sapien quis scelerisque vulputate, lectus leo hendrerit sapien, a elementum nibh tellus non lorem. Nunc congue luctus nibh ut sapien, et scelerisque tellus, eget ultricies arcu suscipit in. Donec placerat laoreet aliquet.</textarea>
+        </section>
+    </main>
+
+    <footer class="logout-footer calendar-footer">
+        <span class="logout-heart" aria-hidden="true">&hearts;</span>
+        <span>Habit Tracker</span>
+    </footer>
+
+    <script>
+        const monthTitle = document.getElementById("calendar-month");
+        const calendarDays = document.getElementById("calendar-days");
+        const selectedDateLabel = document.getElementById("selected-date");
+        const calendarError = document.getElementById("calendar-error");
+        let displayedMonth;
+        let selectedDay;
+        let today;
+
+        function updateSelectedDay() {
+            const date = new Date(displayedMonth.year, displayedMonth.month - 1, selectedDay);
+            selectedDateLabel.textContent = `(${date.toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+            })})`;
+            calendarDays.querySelectorAll(".calendar-day").forEach((button) => {
+                const isSelected = Number(button.dataset.day) === selectedDay;
+                button.classList.toggle("is-selected", isSelected);
+                button.setAttribute("aria-pressed", String(isSelected));
+            });
+        }
+
+        async function renderMonth(year, month) {
+            calendarError.hidden = true;
+            monthTitle.textContent = "Loading calendar...";
+            try {
+                const query = year === undefined
+                    ? ""
+                    : `?year=${encodeURIComponent(year)}&month=${encodeURIComponent(month)}`;
+                const response = await fetch(`/api/calendar/month${query}`);
+                if (!response.ok) {
+                    throw new Error(`Calendar request failed (${response.status}).`);
+                }
+
+                const data = await response.json();
+                displayedMonth = { year: data.year, month: data.month };
+                today = data.today;
+                monthTitle.textContent = `${data.monthName}, ${data.year}`;
+
+                const previousMonth = displayedMonth.month === 1
+                    ? { year: displayedMonth.year - 1, month: 12 }
+                    : { year: displayedMonth.year, month: displayedMonth.month - 1 };
+                const nextMonth = displayedMonth.month === 12
+                    ? { year: displayedMonth.year + 1, month: 1 }
+                    : { year: displayedMonth.year, month: displayedMonth.month + 1 };
+                document.getElementById("previous-month").onclick =
+                    () => renderMonth(previousMonth.year, previousMonth.month);
+                document.getElementById("next-month").onclick =
+                    () => renderMonth(nextMonth.year, nextMonth.month);
+
+                const firstDayOffset = data.firstDayOffset;
+                const weekCount = 6;
+                calendarDays.replaceChildren();
+                for (let week = 0; week < weekCount; week += 1) {
+                    const row = document.createElement("tr");
+                    for (let weekday = 0; weekday < 7; weekday += 1) {
+                        const cell = document.createElement("td");
+                        const dayNumber = week * 7 + weekday - firstDayOffset + 1;
+                        if (dayNumber >= 1 && dayNumber <= data.daysInMonth) {
+                            const button = document.createElement("button");
+                            button.className = "calendar-day";
+                            button.type = "button";
+                            button.dataset.day = String(dayNumber);
+                            button.textContent = String(dayNumber);
+                            button.setAttribute("aria-label", new Date(
+                                displayedMonth.year,
+                                displayedMonth.month - 1,
+                                dayNumber
+                            ).toLocaleDateString(undefined, {
+                                weekday: "long",
+                                month: "long",
+                                day: "numeric",
+                                year: "numeric"
+                            }));
+                            if (today.year === displayedMonth.year
+                                && today.month === displayedMonth.month
+                                && today.day === dayNumber) {
+                                button.classList.add("is-today");
+                                button.setAttribute("aria-current", "date");
+                            }
+                            button.addEventListener("click", () => {
+                                selectedDay = dayNumber;
+                                updateSelectedDay();
+                            });
+                            cell.append(button);
+                        }
+                        row.append(cell);
+                    }
+                    calendarDays.append(row);
+                }
+                selectedDay = today.year === displayedMonth.year && today.month === displayedMonth.month
+                    ? today.day
+                    : 1;
+                updateSelectedDay();
+            } catch (error) {
+                monthTitle.textContent = "Calendar unavailable";
+                calendarError.textContent = error.message;
+                calendarError.hidden = false;
+            }
+        }
+
+        document.querySelectorAll(".status-button").forEach((button) => {
+            button.addEventListener("click", () => {
+                document.querySelectorAll(".status-button").forEach((statusButton) => {
+                    const isActive = statusButton === button;
+                    statusButton.classList.toggle("is-active", isActive);
+                    statusButton.setAttribute("aria-pressed", String(isActive));
+                });
+            });
+        });
+
+        document.querySelectorAll(".habit-row").forEach((button) => {
+            button.addEventListener("click", () => {
+                const isComplete = button.classList.toggle("is-complete");
+                button.setAttribute("aria-pressed", String(isComplete));
+            });
+        });
+
+        renderMonth();
+    </script>
+</body>
+</html>

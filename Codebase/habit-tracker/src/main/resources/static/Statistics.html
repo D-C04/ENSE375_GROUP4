@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styleStats.css">
+</head>
+
+<body class="statistics-page">
+    <header class="logout-header profile-header statistics-header">
+        <span class="logout-heart" aria-hidden="true">&hearts;</span>
+        <span>Habit Tracker</span>
+        <nav class="profile-nav" aria-label="Main navigation">
+            <a href="Dashboard.html">Dashboard</a>
+            <a href="Calendar.html">Calendar</a>
+            <a href="Statistics.html" aria-current="page">Statistics</a>
+        </nav>
+        <span class="profile-user-icon" aria-hidden="true"></span>
+    </header>
+
+    <main class="statistics-content">
+        <section class="statistics-summary" aria-label="Habit summary">
+            <article class="statistics-metric">
+                <h1>Streak: Completed all tasks</h1>
+                <div class="statistics-metric-card">
+                    <svg class="statistics-large-flame" viewBox="0 0 64 80" aria-hidden="true">
+                        <path d="M33 1c3 15-3 20-9 27-4 5-7 11-7 18 0 12 9 21 21 21s21-9 21-21c0-11-6-20-16-29 1 9-2 14-7 17 2-12 0-23-3-33ZM38 43c6 5 9 9 9 14a9 9 0 0 1-18 0c0-5 3-9 9-14Z"/>
+                    </svg>
+                    <span class="statistics-streak-value" th:text="${completedAllTasksStreak}">--</span>
+                </div>
+            </article>
+            <article class="statistics-metric">
+                <h1>Average Daily Completion</h1>
+                <div class="statistics-metric-card">
+                    <span class="statistics-average-value" th:text="${averageDailyCompletion + '%'}">--%</span>
+                </div>
+            </article>
+        </section>
+
+        <section class="statistics-active" aria-labelledby="active-tasks-title">
+            <h2 id="active-tasks-title">Streak: Active Tasks</h2>
+            <h3>All Day</h3>
+            
+
+            <h3>Morning</h3>
+
+
+            <h3>Evening</h3>
+        </section>
+    </main>
+
+    <footer class="logout-footer statistics-footer">
+        <span class="logout-heart" aria-hidden="true">&hearts;</span>
+        <span>Habit Tracker</span>
+    </footer>
+</body>
+
+</html>

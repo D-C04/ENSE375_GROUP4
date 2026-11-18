@@ -97,4 +97,10 @@ public class UserTable {
     }
 
 
+
+    public boolean doesUserExist(String username){
+        return true;
+    }
+
+
 }

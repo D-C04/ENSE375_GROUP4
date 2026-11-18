@@ -1,6 +1,7 @@
 package com.example;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -310,6 +311,14 @@ public class UserTableTests {
         boolean doesUserExist = userTable.doesUserExist("username1");
 
         assertTrue(doesUserExist);
+    }
+
+    @Test
+    void DoesUserExist_username1DoesNotExist_false() throws SQLException{
+
+        boolean doesUserExist = userTable.doesUserExist("username1");
+
+        assertFalse(doesUserExist);
     }
 
 

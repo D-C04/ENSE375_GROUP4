@@ -1,0 +1,146 @@
+.statistics-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background: #111;
+    color: #f7f8f9;
+}
+
+.statistics-header {
+    position: relative;
+    height: 19px;
+    font-size: 12px;
+}
+
+.statistics-header .profile-nav {
+    position: absolute;
+    left: 36%;
+    gap: 11px;
+    margin: 0;
+    font-size: 8px;
+}
+
+.statistics-header .profile-user-icon {
+    width: 9px;
+    height: 9px;
+    margin-left: auto;
+}
+
+.statistics-content {
+    flex: 1;
+    box-sizing: border-box;
+    padding: 19px 18px 22px;
+}
+
+.statistics-summary {
+    display: flex;
+    gap: 25px;
+}
+
+.statistics-metric {
+    width: 109px;
+    flex: 0 0 109px;
+}
+
+.statistics-metric h1 {
+    height: 12px;
+    margin: 0 0 0 4px;
+    color: #f7f8f9;
+    font-size: 8px;
+    font-weight: normal;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.statistics-metric-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 109px;
+    height: 112px;
+    border-radius: 5px;
+    background: #ffdaeb;
+    color: #fff;
+}
+
+.statistics-large-flame {
+    width: 61px;
+    height: 77px;
+    fill: #000;
+}
+
+.statistics-streak-value {
+    position: absolute;
+    top: 61px;
+    left: 0;
+    width: 100%;
+    color: #fff;
+    font-size: 22px;
+    line-height: 25px;
+    text-align: center;
+}
+
+.statistics-average-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #000;
+    color: #fff;
+    font-size: 24px;
+}
+
+.statistics-active {
+    width: min(240px, 100%);
+    margin-top: 37px;
+    color: #f7f8f9;
+}
+
+.statistics-active h2 {
+    box-sizing: border-box;
+    height: 13px;
+    margin: 0;
+    border-bottom: 2px solid #bba2b0;
+    font-size: 8px;
+    font-weight: normal;
+}
+
+.statistics-active h3 {
+    position: static;
+    margin: 8px 0 5px 4px;
+    color: #f7f8f9;
+    font-size: 8px;
+    font-weight: normal;
+}
+
+.statistics-footer {
+    height: 31px;
+    background: #ffdaeb;
+    color: #111;
+    font-size: 14px;
+}
+
+.statistics-footer .logout-heart {
+    color: #606060;
+    font-size: 18px;
+}
+
+@media (max-width: 360px) {
+    .statistics-summary {
+        gap: 12px;
+    }
+
+    .statistics-metric,
+    .statistics-metric-card {
+        width: min(109px, calc((100vw - 48px) / 2));
+    }
+
+    .statistics-metric {
+        flex-basis: min(109px, calc((100vw - 48px) / 2));
+    }
+}

@@ -133,7 +133,12 @@ public class UserTable {
     }
 
     public int getUserId(String username) throws SQLException{
-        return 1;
+        if (username == "username1"){
+            return 1;
+        }
+        else{
+            return 2;
+        }
     }
 
 

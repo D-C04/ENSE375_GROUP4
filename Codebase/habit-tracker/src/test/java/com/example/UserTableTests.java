@@ -321,6 +321,53 @@ public class UserTableTests {
         assertFalse(doesUserExist);
     }
 
+    @Test
+    void DoesUserExist_username2DoesExistMultUsers_true() throws SQLException{
+
+        UserModel user1 = new UserModel("username1", "1234567890", "email@email.com");
+        userTable.addUser(user1);
+
+        UserModel user2 = new UserModel("username2", "0987654321", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        boolean doesUserExist = userTable.doesUserExist("username2");
+
+        assertTrue(doesUserExist);
+    }
+
+    @Test
+    void DoesEmailExist_EmailDoesExist_true() throws SQLException{
+
+        UserModel user1 = new UserModel("username1", "1234567890", "email@email.com");
+        userTable.addUser(user1);
+
+        boolean doesEmailExist = userTable.doesEmailExist("email@email.com");
+
+        assertTrue(doesEmailExist);
+    }
+
+    @Test
+    void DoesEmailExist_EmailDoesNotExist_false() throws SQLException{
+
+        boolean doesEmailExist = userTable.doesEmailExist("email@email.com");
+
+        assertFalse(doesEmailExist);
+    }
+
+    @Test
+    void DoesEmailExist_EmailDoesExistMultUsers_true() throws SQLException{
+
+        UserModel user1 = new UserModel("username1", "1234567890", "email@email.com");
+        userTable.addUser(user1);
+
+        UserModel user2 = new UserModel("username2", "0987654321", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        boolean doesEmailExist = userTable.doesEmailExist("email@email.com");
+
+        assertTrue(doesEmailExist);
+    }
+
 
 
 

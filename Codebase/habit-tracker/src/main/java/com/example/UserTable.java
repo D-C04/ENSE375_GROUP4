@@ -96,10 +96,22 @@ public class UserTable {
         }
     }
 
+    public boolean doesUserExist(String username) throws SQLException{
+        String sql = "SELECT COUNT(*) FROM userTable WHERE username = ?";
 
+        try(PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setString(1, username);
 
-    public boolean doesUserExist(String username){
-        return true;
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+
+                if (rs.getInt(1) > 0){
+                    return true;
+                }
+                
+                return false;                              
+            }
+        }
     }
 
 

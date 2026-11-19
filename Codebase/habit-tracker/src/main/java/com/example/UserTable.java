@@ -132,5 +132,9 @@ public class UserTable {
         }
     }
 
+    public int getUserId(String username) throws SQLException{
+        return 1;
+    }
+
 
 }

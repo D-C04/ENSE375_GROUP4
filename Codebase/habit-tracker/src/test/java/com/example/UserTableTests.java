@@ -393,6 +393,17 @@ public class UserTableTests {
         assertEquals(2, userId);
     }
 
+    @Test
+    void GetUserId_UserNotExist_ReturnsNegativeOne() throws SQLException{
+
+        int userId = userTable.getUserId("username1");
+
+        assertEquals(-1, userId);
+    }
+
+
+
+
 
 
 

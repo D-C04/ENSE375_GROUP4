@@ -379,6 +379,20 @@ public class UserTableTests {
         assertEquals(1, userId);
     }
 
+    @Test
+    void GetUserId_Id2_ReturnsIdOfGivenUser() throws SQLException{
+
+        UserModel user1 = new UserModel("username1", "1234567890", "email@email.com");
+        userTable.addUser(user1);
+
+        UserModel user2 = new UserModel("username2", "0987654321", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        int userId = userTable.getUserId("username2");
+
+        assertEquals(2, userId);
+    }
+
 
 
 

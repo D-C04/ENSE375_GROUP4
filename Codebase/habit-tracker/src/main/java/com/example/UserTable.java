@@ -133,11 +133,20 @@ public class UserTable {
     }
 
     public int getUserId(String username) throws SQLException{
-        if (username == "username1"){
-            return 1;
-        }
-        else{
-            return 2;
+        String sql = "SELECT userId FROM userTable WHERE username = ?";
+
+        try(PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setString(1, username);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if(rs.next()){
+                    int userId = rs.getInt(1);
+                
+                    return userId;   
+                }
+
+                return -1;                             
+            }
         }
     }
 

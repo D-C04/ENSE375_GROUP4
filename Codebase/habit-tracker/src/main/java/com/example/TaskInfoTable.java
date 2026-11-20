@@ -112,4 +112,18 @@ public class TaskInfoTable {
         }
     }
 
+    public int updateTaskEndDate(String taskName, String newEndDate) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskEndDate = ? WHERE taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1, newEndDate);
+                ps.setString(2, taskName);
+                int numRowsUpdated = ps.executeUpdate();
+
+                return numRowsUpdated;
+            }
+        }
+    }
+
 }

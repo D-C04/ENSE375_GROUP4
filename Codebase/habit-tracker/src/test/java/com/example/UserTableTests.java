@@ -16,7 +16,6 @@ import java.sql.ResultSet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 
 public class UserTableTests {
@@ -34,7 +33,7 @@ public class UserTableTests {
         Files.deleteIfExists(Path.of(dbFile));
         dbSetup = new DatabaseSetup(tempDir, dbFile);  
         dbSetup.createTables();
-        userTable = new UserTable(dbSetup.openConnection());
+        userTable = new UserTable(dbSetup);
     }
 
     @AfterEach 
@@ -400,6 +399,7 @@ public class UserTableTests {
 
         assertEquals(-1, userId);
     }
+
 
 
 

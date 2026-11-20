@@ -35,7 +35,7 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void AddTask_firstTask_OneRowInTable() throws SQLException{
+    void AddTask_FirstTask_OneRowInTable() throws SQLException{
 
         // If a user is not added the foreign key constraint will fail
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
@@ -56,13 +56,13 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void AddTask_firstTask_CorrectInfoInTable() throws SQLException{
+    void AddTask_FirstTask_CorrectInfoInTable() throws SQLException{
 
         // If a user is not added the foreign key constraint will fail
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
         userTable.addUser(user);
 
-        TaskModel task = new TaskModel(1, "read", 2, "morning", "pages", "01-09-2026", "12-21-2026");
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
         String query = "SELECT COUNT(*) FROM genTaskTable WHERE userId = 1 AND taskName = 'read' AND "
@@ -77,4 +77,20 @@ public class TaskInfoTableTests {
             assertEquals(1, rs.getInt(1));
         }
     }
+
+    @Test
+    void DeleteTask_FirstTask_ReturnsOne() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        int result = taskInfoTable.deleteTask(task.getTaskName());
+
+        assertEquals(1, result);
+    }
+
 }

@@ -238,6 +238,63 @@ public class TaskInfoTableTests {
     }
 
     @Test
+    void UpdateTimeOfDay_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+
+        int result = taskInfoTable.updateTimeOfDay("read", "evening");
+
+        assertEquals(0, result);
+
+    }
+
+    @Test
+    void UpdateTimeOfDay_NumOfChangedRowsTaskDoesExist_OneIsReturned() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        int result = taskInfoTable.updateTimeOfDay("read", "evening");
+
+        assertEquals(1, result);
+
+    }
+
+    @Test
+    void UpdateTimeOfDay_OneExistingTask_TimeOfDayIsChangedInDb() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        taskInfoTable.updateTimeOfDay("read", "evening");
+
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'morning'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'evening'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+    }
+
+    @Test
     void UpdateTaskUnit_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
 
         int result = taskInfoTable.updateTaskUnit("read", "chapters");

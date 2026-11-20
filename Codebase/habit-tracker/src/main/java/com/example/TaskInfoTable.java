@@ -84,4 +84,18 @@ public class TaskInfoTable {
         }
     }
 
+    public int updateTimeOfDay(String taskName, String newTimeOfDay) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskTimeOfDay = ? WHERE taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1, newTimeOfDay);
+                ps.setString(2, taskName);
+                int numRowsUpdated = ps.executeUpdate();
+
+                return numRowsUpdated;
+            }
+        }
+    }
+
 }

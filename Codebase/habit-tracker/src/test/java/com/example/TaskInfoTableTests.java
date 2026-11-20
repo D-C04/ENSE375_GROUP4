@@ -20,6 +20,7 @@ public class TaskInfoTableTests {
     private String dbFile = "habitTrackerTestTemp.db";
     private DatabaseSetup dbSetup;
     private TaskInfoTable taskInfoTable;
+    private UserTable userTable;
 
     @TempDir
     Path tempDir;
@@ -30,10 +31,16 @@ public class TaskInfoTableTests {
         dbSetup = new DatabaseSetup(tempDir, dbFile);  
         dbSetup.createTables();
         taskInfoTable = new TaskInfoTable(dbSetup);
+        userTable = new UserTable(dbSetup);
     }
 
     @Test
     void AddTask_firstTask_OneRowInTable() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
         TaskModel task = new TaskModel(1, "read", 2, "pages", "jan-09-2026", "dec-21-2026");
         taskInfoTable.addTask(task);
 

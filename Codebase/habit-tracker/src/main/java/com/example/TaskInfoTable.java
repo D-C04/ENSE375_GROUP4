@@ -98,4 +98,18 @@ public class TaskInfoTable {
         }
     }
 
+    public int updateTaskStartDate(String taskName, String newStartDate) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskStartDate = ? WHERE taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1, newStartDate);
+                ps.setString(2, taskName);
+                int numRowsUpdated = ps.executeUpdate();
+
+                return numRowsUpdated;
+            }
+        }
+    }
+
 }

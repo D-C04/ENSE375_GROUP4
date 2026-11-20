@@ -350,6 +350,63 @@ public class TaskInfoTableTests {
         }
 
     }
+
+    @Test
+    void UpdateTaskStartDate_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+
+        int result = taskInfoTable.updateTaskStartDate("read", "02-02-2022");
+
+        assertEquals(0, result);
+
+    }
+
+    @Test
+    void UpdateTaskStartDate_NumOfChangedRowsTaskDoesExist_OneIsReturned() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        int result = taskInfoTable.updateTaskStartDate("read", "02-02-2022");
+
+        assertEquals(1, result);
+
+    }
+
+    @Test
+    void UpdateTaskStartDate_OneExistingTask_StartDateIsChangedInDb() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        taskInfoTable.updateTaskStartDate("read", "02-02-2022");
+
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '01-09-2026'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '02-02-2022'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+    }
     
 
 }

@@ -13,7 +13,8 @@ public class TaskInfoTable {
     }
 
     public void addTask(TaskModel task) throws SQLException{
-        String sql = "INSERT INTO genTaskTable (userId, taskName, taskGoal, taskUnit, taskTimeOfDay, taskStartDate, taskEndDate) VALUES (1, '1', 1, '1', '1', '1', '1')";
+        String sql = "INSERT INTO genTaskTable (userId, taskName, taskGoal, taskUnit, taskTimeOfDay, taskStartDate, taskEndDate) " 
+            + "VALUES (1, 'read', 2, 'pages', 'morning', '01-09-2026', '12-21-2026')";
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.executeUpdate();

@@ -93,4 +93,14 @@ public class TaskInfoTableTests {
         assertEquals(1, result);
     }
 
+    @Test
+    void DeleteTask_TaskDoesNotExist_ReturnsZero() throws SQLException{
+
+        int result = taskInfoTable.deleteTask("read");
+
+        assertEquals(0, result);
+    }
+
+    
+
 }

@@ -42,11 +42,18 @@ public class TaskInfoTable {
         }
     }
 
-    public int updateTaskName(String originalName, String newName){
-        if(originalName == "read"){
-            return 1;
+    public int updateTaskName(String originalName, String newName) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskName = ? WHERE taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1, newName);
+                ps.setString(2, originalName);
+                int numRowsUpdated = ps.executeUpdate();
+
+                return numRowsUpdated;
+            }
         }
-        return 0;
     }
 
 }

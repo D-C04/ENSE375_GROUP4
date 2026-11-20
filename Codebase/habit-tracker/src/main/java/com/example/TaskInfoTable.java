@@ -29,4 +29,8 @@ public class TaskInfoTable {
         }
     }
 
+    public int deleteTask(String taskName) throws SQLException{
+        return 1;
+    }
+
 }

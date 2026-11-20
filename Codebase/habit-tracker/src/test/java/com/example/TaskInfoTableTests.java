@@ -133,7 +133,7 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void UpdateTaskName_NumOfChangedRowsTaskDoesExist_OnceIsReturned() throws SQLException{
+    void UpdateTaskName_NumOfChangedRowsTaskDoesExist_OneIsReturned() throws SQLException{
 
         // If a user is not added the foreign key constraint will fail
         UserModel user = new UserModel("username1", "123456789", "email@email.com");

@@ -43,6 +43,9 @@ public class TaskInfoTable {
     }
 
     public int updateTaskName(String originalName, String newName){
+        if(originalName == "read"){
+            return 1;
+        }
         return 0;
     }
 

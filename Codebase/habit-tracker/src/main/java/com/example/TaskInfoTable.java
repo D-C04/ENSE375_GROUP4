@@ -56,13 +56,27 @@ public class TaskInfoTable {
         }
     }
 
-    public int updateTaskGoalAmount(String originalName, int newGoalAmount) throws SQLException{
+    public int updateTaskGoalAmount(String taskName, int newGoalAmount) throws SQLException{
         String sql = "UPDATE genTaskTable set taskGoal = ? WHERE taskName = ?";
 
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setInt(1, newGoalAmount);
-                ps.setString(2, originalName);
+                ps.setString(2, taskName);
+                int numRowsUpdated = ps.executeUpdate();
+
+                return numRowsUpdated;
+            }
+        }
+    }
+
+    public int updateTaskUnit(String taskName, String newUnit) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskUnit = ? WHERE taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1, newUnit);
+                ps.setString(2, taskName);
                 int numRowsUpdated = ps.executeUpdate();
 
                 return numRowsUpdated;

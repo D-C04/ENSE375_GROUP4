@@ -30,10 +30,16 @@ public class TaskInfoTable {
     }
 
     public int deleteTask(String taskName) throws SQLException{
-        if (taskName == "read"){
-            return 0;
+        String sql = "DELETE FROM genTaskTable WHERE taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1, taskName);
+                int numRowsDeleted = ps.executeUpdate();
+
+                return numRowsDeleted;
+            }
         }
-        return 1;
     }
 
 }

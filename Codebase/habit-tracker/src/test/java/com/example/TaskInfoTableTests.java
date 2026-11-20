@@ -131,6 +131,23 @@ public class TaskInfoTableTests {
         assertEquals(0, result);
 
     }
+
+    @Test
+    void UpdateTaskName_NumOfChangedRowsTaskDoesExist_OnceIsReturned() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        taskInfoTable.deleteTask(task.getTaskName());
+
+        int result = taskInfoTable.updateTaskName(task.getTaskName(), "walk");
+
+        assertEquals(1, result);
+
+    }
     
 
 }

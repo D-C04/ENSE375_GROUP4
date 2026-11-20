@@ -30,6 +30,9 @@ public class TaskInfoTable {
     }
 
     public int deleteTask(String taskName) throws SQLException{
+        if (taskName == "read"){
+            return 0;
+        }
         return 1;
     }
 

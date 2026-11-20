@@ -56,4 +56,18 @@ public class TaskInfoTable {
         }
     }
 
+    public int updateTaskGoalAmount(String originalName, int newGoalAmount) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskGoal = ? WHERE taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setInt(1, newGoalAmount);
+                ps.setString(2, originalName);
+                int numRowsUpdated = ps.executeUpdate();
+
+                return numRowsUpdated;
+            }
+        }
+    }
+
 }

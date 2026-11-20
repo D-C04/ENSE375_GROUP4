@@ -101,6 +101,28 @@ public class TaskInfoTableTests {
         assertEquals(0, result);
     }
 
+    @Test
+    void DeleteTask_FirstTask_ZeroRowsInTable() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        taskInfoTable.deleteTask(task.getTaskName());
+
+        String query = "SELECT COUNT(*) FROM genTaskTable";
+
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+    }
+
     
 
 }

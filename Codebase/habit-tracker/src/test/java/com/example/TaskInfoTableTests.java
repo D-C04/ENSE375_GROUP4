@@ -123,6 +123,14 @@ public class TaskInfoTableTests {
         }
     }
 
+    @Test
+    void UpdateTaskName_NumOfChangedRows_OneIsReturned() throws SQLException{
+
+        int result = taskInfoTable.updateTaskName("read", "walk");
+
+        assertEquals(1, result);
+
+    }
     
 
 }

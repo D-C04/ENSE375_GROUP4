@@ -148,6 +148,38 @@ public class TaskInfoTableTests {
         assertEquals(1, result);
 
     }
+
+    @Test
+    void UpdateTaskName_OneExistingTask_NameIsChangedInDb() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        taskInfoTable.updateTaskName(task.getTaskName(), "walk");
+
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'read'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'walk'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+    }
     
 
 }

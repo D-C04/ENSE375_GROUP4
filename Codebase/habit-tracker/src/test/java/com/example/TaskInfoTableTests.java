@@ -124,11 +124,11 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void UpdateTaskName_NumOfChangedRows_OneIsReturned() throws SQLException{
+    void UpdateTaskName_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
 
         int result = taskInfoTable.updateTaskName("read", "walk");
 
-        assertEquals(1, result);
+        assertEquals(0, result);
 
     }
     

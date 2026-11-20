@@ -42,4 +42,8 @@ public class TaskInfoTable {
         }
     }
 
+    public int updateTaskName(String originalName, String newName){
+        return 0;
+    }
+
 }

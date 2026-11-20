@@ -34,6 +34,8 @@ public class TaskInfoTableTests {
 
     @Test
     void AddTask_firstTask_OneRowInTable() throws SQLException{
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "jan-09-2026", "dec-21-2026");
+        taskInfoTable.addTask(task);
 
         String query = "SELECT COUNT(*) FROM genTaskTable;";
 

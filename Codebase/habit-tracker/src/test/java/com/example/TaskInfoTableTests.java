@@ -41,7 +41,7 @@ public class TaskInfoTableTests {
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
         userTable.addUser(user);
 
-        TaskModel task = new TaskModel(1, "read", 2, "pages", "jan-09-2026", "dec-21-2026");
+        TaskModel task = new TaskModel(1, "read", 2, "morning", "pages", "jan-09-2026", "dec-21-2026");
         taskInfoTable.addTask(task);
 
         String query = "SELECT COUNT(*) FROM genTaskTable;";
@@ -52,7 +52,29 @@ public class TaskInfoTableTests {
             rs.next();
 
             assertEquals(1, rs.getInt(1));
-         
+        }
+    }
+
+    @Test
+    void AddTask_firstTask_CorrectInfoInTable() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "morning", "pages", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        String query = "SELECT COUNT(*) FROM genTaskTable WHERE userId = 1 AND taskName = 'read' AND "
+            + "taskGoal = 2 AND taskUnit = 'pages' AND taskTimeOfDay = 'morning' AND taskStartDate = '01-09-2026' "
+            + "AND taskEndDate = '12-21-2026'";
+
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
         }
     }
 }

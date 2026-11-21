@@ -241,4 +241,24 @@ public class TaskInfoTable {
         }
     }
 
+    public int getTaskId(int userId, String taskName) throws SQLException{
+        String sql = "SELECT taskID FROM genTaskTable WHERE userID = ? AND taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setInt(1, userId);
+                ps.setString(2, taskName);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if(rs.next()){
+                        int taskID = rs.getInt(1);
+                    
+                        return taskID;   
+                    }
+
+                    return -1;                             
+                }
+            }
+        }
+    }
 }

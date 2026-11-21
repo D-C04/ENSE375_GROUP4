@@ -1,7 +1,6 @@
 package com.example;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -905,6 +904,8 @@ public class TaskInfoTableTests {
 
     }
 
+
+
     @Test
     void GetTaskByTimeOfDay_userDoesNotExist_EmptyListIsReturned() throws SQLException{
 
@@ -989,6 +990,8 @@ public class TaskInfoTableTests {
         assertEquals(2, userTaskArray.size());;
 
     }
+
+
 
     @Test
     void GetSingleTask_TaskDoesNotExist_NullIsReturned() throws SQLException{
@@ -1080,6 +1083,34 @@ public class TaskInfoTableTests {
         TaskModel userTask = taskInfoTable.getSingleTask(userTable.getUserId(user.getUsername()), "walk");
 
         assertNull(userTask);
+
+    }
+
+
+    @Test
+    void GetTaskId_TaskDoesNotExist_NegativeOneIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        int taskId = taskInfoTable.getTaskId(1, "read");
+
+        assertEquals(-1, taskId);
+
+    }
+
+    @Test
+    void GetTaskId_TaskDoesExist_OneIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "walk", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        int taskId = taskInfoTable.getTaskId(task.getCorrespondingUserId(), task.getTaskName());
+
+        assertEquals(1, taskId);
 
     }
 }

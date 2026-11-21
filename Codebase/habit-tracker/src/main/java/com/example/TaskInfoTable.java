@@ -32,12 +32,13 @@ public class TaskInfoTable {
         }
     }
 
-    public int deleteTask(String taskName) throws SQLException{
-        String sql = "DELETE FROM genTaskTable WHERE taskName = ?";
+    public int deleteTask(int userId, String taskName) throws SQLException{
+        String sql = "DELETE FROM genTaskTable WHERE userId = ? AND taskName = ?";
 
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){
-                ps.setString(1, taskName);
+                ps.setInt(1, userId);
+                ps.setString(2, taskName);
                 int numRowsDeleted = ps.executeUpdate();
 
                 return numRowsDeleted;
@@ -45,13 +46,14 @@ public class TaskInfoTable {
         }
     }
 
-    public int updateTaskName(String originalName, String newName) throws SQLException{
-        String sql = "UPDATE genTaskTable set taskName = ? WHERE taskName = ?";
+    public int updateTaskName(int userId, String originalName, String newName) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskName = ? WHERE taskName = ? AND userId = ?";
 
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setString(1, newName);
                 ps.setString(2, originalName);
+                ps.setInt(3, userId);
                 int numRowsUpdated = ps.executeUpdate();
 
                 return numRowsUpdated;
@@ -59,13 +61,14 @@ public class TaskInfoTable {
         }
     }
 
-    public int updateTaskGoalAmount(String taskName, int newGoalAmount) throws SQLException{
-        String sql = "UPDATE genTaskTable set taskGoal = ? WHERE taskName = ?";
+    public int updateTaskGoalAmount(int userId, String taskName, int newGoalAmount) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskGoal = ? WHERE taskName = ? AND userId = ?";
 
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setInt(1, newGoalAmount);
                 ps.setString(2, taskName);
+                ps.setInt(3, userId);
                 int numRowsUpdated = ps.executeUpdate();
 
                 return numRowsUpdated;
@@ -73,13 +76,14 @@ public class TaskInfoTable {
         }
     }
 
-    public int updateTaskUnit(String taskName, String newUnit) throws SQLException{
-        String sql = "UPDATE genTaskTable set taskUnit = ? WHERE taskName = ?";
+    public int updateTaskUnit(int userId, String taskName, String newUnit) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskUnit = ? WHERE taskName = ? AND userId = ?";
 
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setString(1, newUnit);
                 ps.setString(2, taskName);
+                ps.setInt(3, userId);
                 int numRowsUpdated = ps.executeUpdate();
 
                 return numRowsUpdated;
@@ -87,13 +91,14 @@ public class TaskInfoTable {
         }
     }
 
-    public int updateTimeOfDay(String taskName, String newTimeOfDay) throws SQLException{
-        String sql = "UPDATE genTaskTable set taskTimeOfDay = ? WHERE taskName = ?";
+    public int updateTimeOfDay(int userId, String taskName, String newTimeOfDay) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskTimeOfDay = ? WHERE taskName = ? AND userId = ?";
 
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setString(1, newTimeOfDay);
                 ps.setString(2, taskName);
+                ps.setInt(3, userId);
                 int numRowsUpdated = ps.executeUpdate();
 
                 return numRowsUpdated;
@@ -101,13 +106,14 @@ public class TaskInfoTable {
         }
     }
 
-    public int updateTaskStartDate(String taskName, String newStartDate) throws SQLException{
-        String sql = "UPDATE genTaskTable set taskStartDate = ? WHERE taskName = ?";
+    public int updateTaskStartDate(int userId, String taskName, String newStartDate) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskStartDate = ? WHERE taskName = ? AND userId = ?";
 
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setString(1, newStartDate);
                 ps.setString(2, taskName);
+                ps.setInt(3, userId);
                 int numRowsUpdated = ps.executeUpdate();
 
                 return numRowsUpdated;
@@ -115,13 +121,14 @@ public class TaskInfoTable {
         }
     }
 
-    public int updateTaskEndDate(String taskName, String newEndDate) throws SQLException{
-        String sql = "UPDATE genTaskTable set taskEndDate = ? WHERE taskName = ?";
+    public int updateTaskEndDate(int userId, String taskName, String newEndDate) throws SQLException{
+        String sql = "UPDATE genTaskTable set taskEndDate = ? WHERE taskName = ? AND userId = ?";
 
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setString(1, newEndDate);
                 ps.setString(2, taskName);
+                ps.setInt(3, userId);
                 int numRowsUpdated = ps.executeUpdate();
 
                 return numRowsUpdated;
@@ -233,4 +240,5 @@ public class TaskInfoTable {
             }
         }
     }
+
 }

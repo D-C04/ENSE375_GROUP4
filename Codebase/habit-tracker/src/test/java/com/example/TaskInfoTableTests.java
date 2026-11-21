@@ -35,6 +35,8 @@ public class TaskInfoTableTests {
         userTable = new UserTable(dbSetup);
     }
 
+
+
     @Test
     void AddTask_FirstTask_OneRowInTable() throws SQLException{
 
@@ -79,6 +81,8 @@ public class TaskInfoTableTests {
         }
     }
 
+
+
     @Test
     void DeleteTask_FirstTask_ReturnsOne() throws SQLException{
 
@@ -89,15 +93,17 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        int result = taskInfoTable.deleteTask(task.getTaskName());
+        int result = taskInfoTable.deleteTask(userTable.getUserId(user.getUsername()), task.getTaskName());
 
         assertEquals(1, result);
     }
 
     @Test
     void DeleteTask_TaskDoesNotExist_ReturnsZero() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
 
-        int result = taskInfoTable.deleteTask("read");
+        int result = taskInfoTable.deleteTask(userTable.getUserId(user.getUsername()), "read");
 
         assertEquals(0, result);
     }
@@ -111,7 +117,7 @@ public class TaskInfoTableTests {
 
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
-        taskInfoTable.deleteTask(task.getTaskName());
+        taskInfoTable.deleteTask(userTable.getUserId(user.getUsername()), task.getTaskName());
 
         String query = "SELECT COUNT(*) FROM genTaskTable";
 
@@ -125,9 +131,41 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void UpdateTaskName_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+    void DeleteTask_DiffUsersHaveSameTaskName_OneRowInTable() throws SQLException{
 
-        int result = taskInfoTable.updateTaskName("read", "walk");
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        TaskModel tasks = new TaskModel(userTable.getUserId(user2.getUsername()), "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(tasks);
+        taskInfoTable.deleteTask(userTable.getUserId(user2.getUsername()), task.getTaskName());
+
+        String query = "SELECT COUNT(*) FROM genTaskTable";
+
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+    }
+
+
+
+    @Test
+    void UpdateTaskName_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        int result = taskInfoTable.updateTaskName(userTable.getUserId(user.getUsername()), "read", "walk");
 
         assertEquals(0, result);
 
@@ -143,7 +181,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        int result = taskInfoTable.updateTaskName(task.getTaskName(), "walk");
+        int result = taskInfoTable.updateTaskName(userTable.getUserId(user.getUsername()), task.getTaskName(), "walk");
 
         assertEquals(1, result);
 
@@ -159,7 +197,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        taskInfoTable.updateTaskName(task.getTaskName(), "walk");
+        taskInfoTable.updateTaskName(userTable.getUserId(user.getUsername()), task.getTaskName(), "walk");
 
         String query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'read'";
         try (Connection conn = dbSetup.openConnection();
@@ -182,9 +220,62 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void UpdateTaskGoalAmount_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+    void UpdateTaskName_DiffUsersHaveTaskWithSameName_NameIsChangedInDbForCorrectUser() throws SQLException{
 
-        int result = taskInfoTable.updateTaskGoalAmount("read", 5);
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        task = new TaskModel(2, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'read'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(2, rs.getInt(1));
+        }
+
+        taskInfoTable.updateTaskName(userTable.getUserId(user.getUsername()), task.getTaskName(), "walk");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'read'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'walk'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+    }
+
+
+
+    @Test
+    void UpdateTaskGoalAmount_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        int result = taskInfoTable.updateTaskGoalAmount(userTable.getUserId(user.getUsername()), "read", 5);
 
         assertEquals(0, result);
 
@@ -200,7 +291,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        int result = taskInfoTable.updateTaskGoalAmount(task.getTaskName(), 5);
+        int result = taskInfoTable.updateTaskGoalAmount(userTable.getUserId(user.getUsername()), task.getTaskName(), 5);
 
         assertEquals(1, result);
 
@@ -216,7 +307,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        taskInfoTable.updateTaskGoalAmount(task.getTaskName(), 5);
+        taskInfoTable.updateTaskGoalAmount(userTable.getUserId(user.getUsername()), task.getTaskName(), 5);
 
         String query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 2";
         try (Connection conn = dbSetup.openConnection();
@@ -239,9 +330,62 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void UpdateTimeOfDay_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+    void UpdateTaskGoalAmount_DiffUsersHaveTaskWithSameName_AmountIsChangedInDbForCorrectUser() throws SQLException{
 
-        int result = taskInfoTable.updateTimeOfDay("read", "evening");
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        task = new TaskModel(2, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 2";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(2, rs.getInt(1));
+        }
+
+        taskInfoTable.updateTaskGoalAmount(userTable.getUserId(user.getUsername()), task.getTaskName(), 5);
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 2";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 5";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+    }
+
+
+
+    @Test
+    void UpdateTimeOfDay_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        int result = taskInfoTable.updateTimeOfDay(userTable.getUserId(user.getUsername()), "read", "evening");
 
         assertEquals(0, result);
 
@@ -257,7 +401,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        int result = taskInfoTable.updateTimeOfDay("read", "evening");
+        int result = taskInfoTable.updateTimeOfDay(userTable.getUserId(user.getUsername()), "read", "evening");
 
         assertEquals(1, result);
 
@@ -273,7 +417,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        taskInfoTable.updateTimeOfDay("read", "evening");
+        taskInfoTable.updateTimeOfDay(userTable.getUserId(user.getUsername()), "read", "evening");
 
         String query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'morning'";
         try (Connection conn = dbSetup.openConnection();
@@ -296,9 +440,62 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void UpdateTaskUnit_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+    void UpdateTimeOfDay_DiffUsersHaveTaskWithSameName_TimetIsChangedInDbForCorrectUser() throws SQLException{
 
-        int result = taskInfoTable.updateTaskUnit("read", "chapters");
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        task = new TaskModel(2, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'morning'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(2, rs.getInt(1));
+        }
+
+        taskInfoTable.updateTimeOfDay(userTable.getUserId(user.getUsername()), "read", "evening");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'morning'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'evening'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+    }
+
+
+
+    @Test
+    void UpdateTaskUnit_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        int result = taskInfoTable.updateTaskUnit(userTable.getUserId(user.getUsername()), "read", "chapters");
 
         assertEquals(0, result);
 
@@ -314,7 +511,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        int result = taskInfoTable.updateTaskUnit("read", "chapters");
+        int result = taskInfoTable.updateTaskUnit(userTable.getUserId(user.getUsername()), "read", "chapters");
 
         assertEquals(1, result);
 
@@ -330,7 +527,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        taskInfoTable.updateTaskUnit("read", "chapters");
+        taskInfoTable.updateTaskUnit(userTable.getUserId(user.getUsername()), "read", "chapters");
 
         String query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'pages'";
         try (Connection conn = dbSetup.openConnection();
@@ -353,9 +550,62 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void UpdateTaskStartDate_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+    void UpdateTaskUnit_DiffUsersHaveTaskWithSameName_UnitIsChangedInDbForCorrectUser() throws SQLException{
 
-        int result = taskInfoTable.updateTaskStartDate("read", "02-02-2022");
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        task = new TaskModel(2, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'pages'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(2, rs.getInt(1));
+        }
+
+        taskInfoTable.updateTaskUnit(userTable.getUserId(user.getUsername()), "read", "chapters");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'pages'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'chapters'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+    }
+
+
+
+    @Test
+    void UpdateTaskStartDate_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        int result = taskInfoTable.updateTaskStartDate(userTable.getUserId(user.getUsername()), "read", "02-02-2022");
 
         assertEquals(0, result);
 
@@ -371,7 +621,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        int result = taskInfoTable.updateTaskStartDate("read", "02-02-2022");
+        int result = taskInfoTable.updateTaskStartDate(userTable.getUserId(user.getUsername()), "read", "02-02-2022");
 
         assertEquals(1, result);
 
@@ -387,7 +637,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        taskInfoTable.updateTaskStartDate("read", "02-02-2022");
+        taskInfoTable.updateTaskStartDate(userTable.getUserId(user.getUsername()), "read", "02-02-2022");
 
         String query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '01-09-2026'";
         try (Connection conn = dbSetup.openConnection();
@@ -410,9 +660,62 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void UpdateTaskEndDate_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+    void UpdateTaskStartDate_DiffUsersHaveTaskWithSameName_StartDateIsChangedInDbForCorrectUser() throws SQLException{
 
-        int result = taskInfoTable.updateTaskEndDate("read", "02-02-2028");
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        task = new TaskModel(2, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '01-09-2026'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(2, rs.getInt(1));
+        }
+
+        taskInfoTable.updateTaskStartDate(userTable.getUserId(user.getUsername()), "read", "02-02-2022");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '01-09-2026'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '02-02-2022'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+    }
+
+
+
+    @Test
+    void UpdateTaskEndDate_NumOfChangedRowsTaskDoesNotExist_ZeroIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        int result = taskInfoTable.updateTaskEndDate(userTable.getUserId(user.getUsername()), "read", "02-02-2028");
 
         assertEquals(0, result);
 
@@ -428,7 +731,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        int result = taskInfoTable.updateTaskEndDate("read", "02-02-2028");
+        int result = taskInfoTable.updateTaskEndDate(userTable.getUserId(user.getUsername()), "read", "02-02-2028");
 
         assertEquals(1, result);
 
@@ -444,7 +747,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        taskInfoTable.updateTaskEndDate("read", "02-02-2028");
+        taskInfoTable.updateTaskEndDate(userTable.getUserId(user.getUsername()), "read", "02-02-2028");
 
         String query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '12-21-2026'";
         try (Connection conn = dbSetup.openConnection();
@@ -465,6 +768,57 @@ public class TaskInfoTableTests {
         }
 
     }
+    
+    @Test
+    void UpdateTaskEndDate_DiffUsersHaveTaskWithSameName_EndDateIsChangedInDbForCorrectUser() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        task = new TaskModel(2, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '12-21-2026'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(2, rs.getInt(1));
+        }
+
+        taskInfoTable.updateTaskEndDate(userTable.getUserId(user.getUsername()), "read", "02-02-2028");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '12-21-2026'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '02-02-2028'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+    }
+
+
     
     @Test
     void GetTaskByUserId_userDoesNotExist_EmptyListIsReturned() throws SQLException{
@@ -586,26 +940,26 @@ public class TaskInfoTableTests {
     }
 
     @Test
-    void GetTaskByTimeOfDay_correctNumOfNightTasksOtherTimesExist_ListOfLength3IsReturned() throws SQLException{
+    void GetTaskByTimeOfDay_correctNumOfEveningTasksOtherTimesExist_ListOfLength3IsReturned() throws SQLException{
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
         userTable.addUser(user);
 
         TaskModel task = new TaskModel(1, "1", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        task = new TaskModel(1, "2", 2, "pages", "night", "01-09-2026", "12-21-2026");
+        task = new TaskModel(1, "2", 2, "pages", "evening", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        task = new TaskModel(1, "3", 2, "pages", "night", "01-09-2026", "12-21-2026");
+        task = new TaskModel(1, "3", 2, "pages", "evening", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        task = new TaskModel(1, "4", 2, "pages", "night", "01-09-2026", "12-21-2026");
+        task = new TaskModel(1, "4", 2, "pages", "evening", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
         task = new TaskModel(1, "5", 2, "pages", "all day", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        List<TaskModel> userTaskArray = taskInfoTable.getTasksByTimeOfDay(userTable.getUserId(user.getUsername()), "night");
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByTimeOfDay(userTable.getUserId(user.getUsername()), "evening");
 
         assertEquals(3, userTaskArray.size());;
 
@@ -702,7 +1056,7 @@ public class TaskInfoTableTests {
         TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "walk", 2, "pages", "all day", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task);
 
-        task = new TaskModel(userTable.getUserId(user.getUsername()), "read", 3, "chapters", "night", "02-09-2026", "11-21-2026");
+        task = new TaskModel(userTable.getUserId(user.getUsername()), "read", 3, "chapters", "evening", "02-09-2026", "11-21-2026");
         taskInfoTable.addTask(task);
 
         TaskModel userTask = taskInfoTable.getSingleTask(1, "read");
@@ -711,7 +1065,7 @@ public class TaskInfoTableTests {
         assertEquals("read", userTask.getTaskName());
         assertEquals(3, userTask.getTaskGoalAmount());
         assertEquals("chapters", userTask.getTaskUnit());
-        assertEquals("night", userTask.getTimeOfDay());
+        assertEquals("evening", userTask.getTimeOfDay());
         assertEquals("02-09-2026", userTask.getStartDate());
         assertEquals("11-21-2026", userTask.getEndDate());
 

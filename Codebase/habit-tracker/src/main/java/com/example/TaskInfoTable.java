@@ -2,7 +2,10 @@ package com.example;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaskInfoTable {
 
@@ -125,5 +128,43 @@ public class TaskInfoTable {
             }
         }
     }
+
+    public List<TaskModel> getTasksByUserId(int userId) throws SQLException{
+
+        List<TaskModel> userTaskList = new ArrayList<>();
+
+        String sql = "SELECT * FROM genTaskTable WHERE userId = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setInt(1, userId);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {             
+                        return userTaskList;
+                    }
+                    else{
+                        do{
+                            int correspondingUserId = rs.getInt("userId");
+                            String taskName = rs.getString("taskName");
+                            int taskGoalAmount = rs.getInt("taskGoal");
+                            String taskUnit = rs.getString("taskUnit");
+                            String timeOfDay = rs.getString("taskTimeOfDay");
+                            String startDate = rs.getString("taskStartDate");
+                            String endDate = rs.getString("taskEndDate");
+
+                            TaskModel newTask = new TaskModel(correspondingUserId, taskName, taskGoalAmount, taskUnit, timeOfDay, startDate, endDate);
+                            userTaskList.add(newTask);
+                        }
+                        while(rs.next());
+                    }                          
+                }
+
+                return userTaskList;
+            }
+        }
+    }
+
+    
 
 }

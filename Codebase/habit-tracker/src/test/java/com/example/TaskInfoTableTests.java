@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -465,5 +466,88 @@ public class TaskInfoTableTests {
 
     }
     
+    @Test
+    void GetTaskByUserId_userDoesNotExist_EmptyListIsReturned() throws SQLException{
 
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByUserId(1);
+
+        assertTrue(userTaskArray.isEmpty());
+
+    }
+
+    @Test
+    void GetTaskByUserId_userHasNoTasks_EmptyListIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByUserId(userTable.getUserId(user.getUsername()));
+
+        assertTrue(userTaskArray.isEmpty());
+
+    }
+
+    @Test
+    void GetTaskByUserId_userHasOneTask_ListOfLengthOneIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByUserId(userTable.getUserId(user.getUsername()));
+
+        assertEquals(1, userTaskArray.size());;
+
+    }
+
+    @Test
+    void GetTaskByUserId_userHasFiveTask_ListOfLengthFiveIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "1", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(1, "2", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(1, "3", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(1, "4", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(1, "5", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByUserId(userTable.getUserId(user.getUsername()));
+
+        assertEquals(5, userTaskArray.size());;
+
+    }
+
+    @Test
+    void GetTaskByUserId_userHasTwoTasksMultUsersHaveTasks_ListOfLengthTwoIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "1", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        UserModel user2 = new UserModel("username2", "0987654321", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        task = new TaskModel(userTable.getUserId(user2.getUsername()), "1", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(userTable.getUserId(user2.getUsername()), "2", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByUserId(userTable.getUserId(user2.getUsername()));
+
+        assertEquals(2, userTaskArray.size());;
+
+    }
 }

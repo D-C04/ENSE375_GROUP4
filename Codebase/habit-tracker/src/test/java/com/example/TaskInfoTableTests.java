@@ -550,4 +550,182 @@ public class TaskInfoTableTests {
         assertEquals(2, userTaskArray.size());;
 
     }
+
+    @Test
+    void GetTaskByTimeOfDay_userDoesNotExist_EmptyListIsReturned() throws SQLException{
+
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByTimeOfDay(1, "morning");
+
+        assertTrue(userTaskArray.isEmpty());
+
+    }
+
+    @Test
+    void GetTaskByTimeOfDay_userHasNoTasks_EmptyListIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByTimeOfDay(userTable.getUserId(user.getUsername()), "morning");
+
+        assertTrue(userTaskArray.isEmpty());
+
+    }
+
+    @Test
+    void GetTaskByTimeOfDay_userHasOneMorningTask_ListOfLengthOneIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByTimeOfDay(userTable.getUserId(user.getUsername()), "morning");
+
+        assertEquals(1, userTaskArray.size());;
+
+    }
+
+    @Test
+    void GetTaskByTimeOfDay_correctNumOfNightTasksOtherTimesExist_ListOfLength3IsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "1", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(1, "2", 2, "pages", "night", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(1, "3", 2, "pages", "night", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(1, "4", 2, "pages", "night", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(1, "5", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByTimeOfDay(userTable.getUserId(user.getUsername()), "night");
+
+        assertEquals(3, userTaskArray.size());;
+
+    }
+
+    @Test
+    void GetTaskByTimeOfDay_userHasTwoAllDayTasksMultUsersHaveTasks_ListOfLengthTwoIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "1", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        UserModel user2 = new UserModel("username2", "0987654321", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        task = new TaskModel(userTable.getUserId(user2.getUsername()), "1", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(userTable.getUserId(user2.getUsername()), "2", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+
+        List<TaskModel> userTaskArray = taskInfoTable.getTasksByTimeOfDay(userTable.getUserId(user2.getUsername()), "all day");
+
+        assertEquals(2, userTaskArray.size());;
+
+    }
+
+    @Test
+    void GetSingleTask_TaskDoesNotExist_NullIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel userTask = taskInfoTable.getSingleTask(userTable.getUserId(user.getUsername()), "read");
+
+        assertNull(userTask);
+
+    }
+
+    @Test
+    void GetSingleTask_UserDoesNotExist_NullIsReturned() throws SQLException{
+
+        TaskModel userTask = taskInfoTable.getSingleTask(1, "read");
+
+        assertNull(userTask);
+
+    }
+
+    @Test
+    void GetSingleTask_TaskExists_NullIsNotReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "walk", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        TaskModel userTask = taskInfoTable.getSingleTask(1, "walk");
+
+        assertNotNull(userTask);
+
+    }
+
+    @Test
+    void GetSingleTask_TaskExists_CorrectTaskObjectIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "walk", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        TaskModel userTask = taskInfoTable.getSingleTask(1, "walk");
+
+        assertEquals(userTable.getUserId(user.getUsername()), userTask.getCorrespondingUserId());
+        assertEquals("walk", userTask.getTaskName());
+        assertEquals(2, userTask.getTaskGoalAmount());
+        assertEquals("pages", userTask.getTaskUnit());
+        assertEquals("all day", userTask.getTimeOfDay());
+        assertEquals("01-09-2026", userTask.getStartDate());
+        assertEquals("12-21-2026", userTask.getEndDate());
+
+    }
+
+    @Test
+    void GetSingleTask_TaskExistsMultTasks_CorrectTaskObjectIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "walk", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        task = new TaskModel(userTable.getUserId(user.getUsername()), "read", 3, "chapters", "night", "02-09-2026", "11-21-2026");
+        taskInfoTable.addTask(task);
+
+        TaskModel userTask = taskInfoTable.getSingleTask(1, "read");
+
+        assertEquals(userTable.getUserId(user.getUsername()), userTask.getCorrespondingUserId());
+        assertEquals("read", userTask.getTaskName());
+        assertEquals(3, userTask.getTaskGoalAmount());
+        assertEquals("chapters", userTask.getTaskUnit());
+        assertEquals("night", userTask.getTimeOfDay());
+        assertEquals("02-09-2026", userTask.getStartDate());
+        assertEquals("11-21-2026", userTask.getEndDate());
+
+    }
+
+    @Test
+    void GetSingleTask_TaskWalkDoesNotExist_NullIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel userTask = taskInfoTable.getSingleTask(userTable.getUserId(user.getUsername()), "walk");
+
+        assertNull(userTask);
+
+    }
 }

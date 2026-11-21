@@ -165,6 +165,72 @@ public class TaskInfoTable {
         }
     }
 
-    
+    public List<TaskModel> getTasksByTimeOfDay(int userId, String timeOfDaySearch) throws SQLException{
 
+        List<TaskModel> userTaskList = new ArrayList<>();
+
+        String sql = "SELECT * FROM genTaskTable WHERE userId = ? AND taskTimeOfDay = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setInt(1, userId);
+                ps.setString(2, timeOfDaySearch);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {             
+                        return userTaskList;
+                    }
+                    else{
+                        do{
+                            int correspondingUserId = rs.getInt("userId");
+                            String taskName = rs.getString("taskName");
+                            int taskGoalAmount = rs.getInt("taskGoal");
+                            String taskUnit = rs.getString("taskUnit");
+                            String timeOfDay = rs.getString("taskTimeOfDay");
+                            String startDate = rs.getString("taskStartDate");
+                            String endDate = rs.getString("taskEndDate");
+
+                            TaskModel newTask = new TaskModel(correspondingUserId, taskName, taskGoalAmount, taskUnit, timeOfDay, startDate, endDate);
+                            userTaskList.add(newTask);
+                        }
+                        while(rs.next());
+                    }                          
+                }
+
+                return userTaskList;
+            }
+        }
+    }
+
+    public TaskModel getSingleTask(int userId, String taskNameSearch) throws SQLException{ 
+   
+        String sql = "SELECT * FROM genTaskTable WHERE userId = ? AND taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setInt(1, userId);
+                ps.setString(2, taskNameSearch);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {             
+                        int correspondingUserId = rs.getInt("userId");
+                        String taskName = rs.getString("taskName");
+                        int taskGoalAmount = rs.getInt("taskGoal");
+                        String taskUnit = rs.getString("taskUnit");
+                        String timeOfDay = rs.getString("taskTimeOfDay");
+                        String startDate = rs.getString("taskStartDate");
+                        String endDate = rs.getString("taskEndDate");
+
+                        TaskModel task = new TaskModel(correspondingUserId, taskName, taskGoalAmount, taskUnit, timeOfDay, startDate, endDate);
+                        
+                        return task;
+                    }
+                    else{
+                        return null;
+                    }
+                    
+                }                          
+            }
+        }
+    }
 }

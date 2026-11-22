@@ -479,9 +479,28 @@ public class TaskLogTableTests {
     @Test
     void GetTaskLogsByUserIdAndDate_UserDoesNotExist_EmptyListIsReturned() throws SQLException{
 
-        List<TaskLogModel> userTaskArray = taskLogTable.getTaskLogsByDateAndUserId(1, "01-12-2026");
+        List<TaskLogModel> userTaskLogList = taskLogTable.getTaskLogsByDateAndUserId(1, "01-12-2026");
 
-        assertTrue(userTaskArray.isEmpty());
+        assertTrue(userTaskLogList.isEmpty());
+
+    }
+
+    @Test
+    void GetTaskByTimeOfDay_userHasOneTaskOnThatDate_ListOfLengthOneIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
+
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
+        taskLogTable.addLog(taskLog);
+
+        List<TaskLogModel> userTaskLogList = taskLogTable.getTaskLogsByDateAndUserId(1, "01-12-2026");
+
+        assertEquals(1, userTaskLogList.size());;
 
     }
 

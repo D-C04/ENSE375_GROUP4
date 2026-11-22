@@ -31,13 +31,13 @@ public class TaskLogTable {
     }
 
     public int deleteTaskLog(int userId, int taskId, String taskDate) throws SQLException{
-        String query = "SELECT COUNT(*) FROM taskLogTable";
+        String query = "DELETE FROM taskLogTable WHERE taskLogDate = '01-12-2026'";
         try (Connection conn = db.openConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();) {
-            rs.next();
+            PreparedStatement ps = conn.prepareStatement(query);){
 
-            return rs.getInt(1);
+            int numRowsDeleted = ps.executeUpdate();
+
+            return numRowsDeleted;
         }
     }
 

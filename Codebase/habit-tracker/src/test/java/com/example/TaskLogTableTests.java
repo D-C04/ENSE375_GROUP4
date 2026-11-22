@@ -504,6 +504,88 @@ public class TaskLogTableTests {
 
     }
 
+
+
+    @Test
+    void GetAllLogsForTask_UserDoesNotExist_EmptyListIsReturned() throws SQLException{
+
+        List<TaskLogModel> userTaskLogList = taskLogTable.getAllLogsForTask(1, 1);
+
+        assertTrue(userTaskLogList.isEmpty());
+
+    }
+
+    @Test
+    void GetAllLogsForTask_userHasOneLog_ListOfLengthOneIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
+
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
+        taskLogTable.addLog(taskLog);
+
+        List<TaskLogModel> userTaskLogList = taskLogTable.getAllLogsForTask(userId, taskId);
+
+        assertEquals(1, userTaskLogList.size());;
+
+    }
+
+    @Test
+    void GetAllLogsForTask_userHasTwoLogsForATask_ListOfLengthTwoIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
+
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
+        taskLogTable.addLog(taskLog);
+        TaskLogModel taskLog2 = new TaskLogModel(userId, taskId, "01-13-2026", true);
+        taskLogTable.addLog(taskLog2);
+
+        List<TaskLogModel> userTaskLogList = taskLogTable.getAllLogsForTask(userId, taskId);
+
+        assertEquals(2, userTaskLogList.size());;
+
+    }
+
+    @Test
+    void GetAllLogsForTask_userHasLogsForDiffTasks_ListOfLengthTwoIsReturned() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
+
+        TaskModel task2 = new TaskModel(1, "write", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task2);
+        int taskId2 = taskInfoTable.getTaskId(userId, task2.getTaskName());
+
+
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
+        taskLogTable.addLog(taskLog);
+        TaskLogModel taskLog2 = new TaskLogModel(userId, taskId, "01-13-2026", true);
+        taskLogTable.addLog(taskLog2);
+        TaskLogModel taskLog3 = new TaskLogModel(userId, taskId2, "01-13-2026", true);
+        taskLogTable.addLog(taskLog3);
+
+        List<TaskLogModel> userTaskLogList = taskLogTable.getAllLogsForTask(userId, taskId);
+
+        assertEquals(2, userTaskLogList.size());;
+
+    }
+
+    
+
     
 
 }

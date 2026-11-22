@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaskLogTable {
 
@@ -41,6 +43,12 @@ public class TaskLogTable {
                 return numRowsDeleted;
             }
         }
+    }
+
+    public List<TaskLogModel> getTaskLogsByDateAndUserId(int userId, String date){
+        List<TaskLogModel> taskLogList = new ArrayList<>();
+
+        return taskLogList;
     }
 
 

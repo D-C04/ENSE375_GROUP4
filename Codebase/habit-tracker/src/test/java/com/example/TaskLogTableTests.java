@@ -479,7 +479,7 @@ public class TaskLogTableTests {
     @Test
     void GetTaskLogsByUserIdAndDate_UserDoesNotExist_EmptyListIsReturned() throws SQLException{
 
-        List<TaskModel> userTaskArray = taskLogTable.getTaskLogsByDateAndUserId(1, "01-12-2026");
+        List<TaskLogModel> userTaskArray = taskLogTable.getTaskLogsByDateAndUserId(1, "01-12-2026");
 
         assertTrue(userTaskArray.isEmpty());
 

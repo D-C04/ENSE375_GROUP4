@@ -28,6 +28,20 @@ public class TaskLogTable {
         }
     }
 
+    public int deleteTask(int userId, String taskName) throws SQLException{
+        String sql = "DELETE FROM genTaskTable WHERE userId = ? AND taskName = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setInt(1, userId);
+                ps.setString(2, taskName);
+                int numRowsDeleted = ps.executeUpdate();
+
+                return numRowsDeleted;
+            }
+        }
+    }
+
 
 
 }

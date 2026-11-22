@@ -46,7 +46,7 @@ public class TaskInfoTableTests {
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
         userTable.addUser(user);
 
-        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "jan-09-2026", "dec-21-2026");
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "01-21-2026");
         taskInfoTable.addTask(task);
 
         String query = "SELECT COUNT(*) FROM genTaskTable;";
@@ -221,8 +221,9 @@ public class TaskInfoTableTests {
         UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
         userTable.addUser(user2);
 
-        TaskModel tasks = new TaskModel(userTable.getUserId(user2.getUsername()), "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
-        taskInfoTable.addTask(tasks);
+        task = new TaskModel(userTable.getUserId(user2.getUsername()), "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        
         taskInfoTable.deleteTask(userTable.getUserId(user2.getUsername()), task.getTaskName());
 
         String query = "SELECT COUNT(*) FROM genTaskTable";
@@ -376,18 +377,7 @@ public class TaskInfoTableTests {
         taskInfoTable.addTask(task);
 
         
-        String query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'read'";
-        try (Connection conn = dbSetup.openConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();) {
-            rs.next();
-
-            assertEquals(2, rs.getInt(1));
-        }
-
-        taskInfoTable.updateTaskName(userTable.getUserId(user.getUsername()), task.getTaskName(), "walk");
-
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'read'";
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'read' AND userId = 1";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -396,7 +386,27 @@ public class TaskInfoTableTests {
             assertEquals(1, rs.getInt(1));
         }
 
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'walk'";
+        taskInfoTable.updateTaskName(userTable.getUserId(user.getUsername()), task.getTaskName(), "walk");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'read' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'walk' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskName = 'read' AND userId = 2";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -503,18 +513,7 @@ public class TaskInfoTableTests {
         taskInfoTable.addTask(task);
 
         
-        String query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 2";
-        try (Connection conn = dbSetup.openConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();) {
-            rs.next();
-
-            assertEquals(2, rs.getInt(1));
-        }
-
-        taskInfoTable.updateTaskGoalAmount(userTable.getUserId(user.getUsername()), task.getTaskName(), 5);
-
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 2";
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 2 AND userId = 1";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -523,7 +522,27 @@ public class TaskInfoTableTests {
             assertEquals(1, rs.getInt(1));
         }
 
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 5";
+        taskInfoTable.updateTaskGoalAmount(userTable.getUserId(user.getUsername()), task.getTaskName(), 5);
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 2 AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 5 AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskGoal = 2 AND userId = 2";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -613,18 +632,7 @@ public class TaskInfoTableTests {
         taskInfoTable.addTask(task);
 
         
-        String query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'morning'";
-        try (Connection conn = dbSetup.openConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();) {
-            rs.next();
-
-            assertEquals(2, rs.getInt(1));
-        }
-
-        taskInfoTable.updateTimeOfDay(userTable.getUserId(user.getUsername()), "read", "evening");
-
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'morning'";
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'morning' AND userId = 1";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -633,7 +641,27 @@ public class TaskInfoTableTests {
             assertEquals(1, rs.getInt(1));
         }
 
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'evening'";
+        taskInfoTable.updateTimeOfDay(userTable.getUserId(user.getUsername()), "read", "evening");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'morning' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'evening' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskTimeOfDay = 'morning' AND userId = 2";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -723,18 +751,7 @@ public class TaskInfoTableTests {
         taskInfoTable.addTask(task);
 
         
-        String query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'pages'";
-        try (Connection conn = dbSetup.openConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();) {
-            rs.next();
-
-            assertEquals(2, rs.getInt(1));
-        }
-
-        taskInfoTable.updateTaskUnit(userTable.getUserId(user.getUsername()), "read", "chapters");
-
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'pages'";
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'pages' AND userId = 1";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -743,7 +760,27 @@ public class TaskInfoTableTests {
             assertEquals(1, rs.getInt(1));
         }
 
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'chapters'";
+        taskInfoTable.updateTaskUnit(userTable.getUserId(user.getUsername()), "read", "chapters");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'pages' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'chapters' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskUnit = 'pages' AND userId = 2";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -833,18 +870,7 @@ public class TaskInfoTableTests {
         taskInfoTable.addTask(task);
 
         
-        String query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '01-09-2026'";
-        try (Connection conn = dbSetup.openConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();) {
-            rs.next();
-
-            assertEquals(2, rs.getInt(1));
-        }
-
-        taskInfoTable.updateTaskStartDate(userTable.getUserId(user.getUsername()), "read", "02-02-2022");
-
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '01-09-2026'";
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '01-09-2026' AND userId = 1";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -853,7 +879,27 @@ public class TaskInfoTableTests {
             assertEquals(1, rs.getInt(1));
         }
 
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '02-02-2022'";
+        taskInfoTable.updateTaskStartDate(userTable.getUserId(user.getUsername()), "read", "02-02-2022");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '01-09-2026' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '02-02-2022' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskStartDate = '01-09-2026' AND userId = 2";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -943,18 +989,7 @@ public class TaskInfoTableTests {
         taskInfoTable.addTask(task);
 
         
-        String query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '12-21-2026'";
-        try (Connection conn = dbSetup.openConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();) {
-            rs.next();
-
-            assertEquals(2, rs.getInt(1));
-        }
-
-        taskInfoTable.updateTaskEndDate(userTable.getUserId(user.getUsername()), "read", "02-02-2028");
-
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '12-21-2026'";
+        String query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '12-21-2026' AND userId = 1";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -963,7 +998,27 @@ public class TaskInfoTableTests {
             assertEquals(1, rs.getInt(1));
         }
 
-        query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '02-02-2028'";
+        taskInfoTable.updateTaskEndDate(userTable.getUserId(user.getUsername()), "read", "02-02-2028");
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '12-21-2026' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '02-02-2028' AND userId = 1";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable Where taskEndDate = '12-21-2026' AND userId = 2";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {

@@ -339,7 +339,7 @@ public class TaskLogTableTests {
         TaskLogModel taskLog = new TaskLogModel(1, 1, "01-12-2026", true);
         taskLogTable.addLog(taskLog);
 
-        int result = taskLogTable.deleteLog(userId, taskId, "01-12-2026");
+        int result = taskLogTable.deleteTaskLog(userId, taskId, "01-12-2026");
 
         assertEquals(1, result);
     }

@@ -1,8 +1,10 @@
 package com.example;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
@@ -43,7 +45,7 @@ public class TaskInfoTableTests {
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
         userTable.addUser(user);
 
-        TaskModel task = new TaskModel(1, "read", 2, "morning", "pages", "jan-09-2026", "dec-21-2026");
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "jan-09-2026", "dec-21-2026");
         taskInfoTable.addTask(task);
 
         String query = "SELECT COUNT(*) FROM genTaskTable;";
@@ -78,6 +80,74 @@ public class TaskInfoTableTests {
 
             assertEquals(1, rs.getInt(1));
         }
+    }
+
+    @Test
+    void AddTask_DuplicateTaskNameForUser_ThrowsSQLException() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        TaskModel task2 = new TaskModel(1, "read", 9, "chapters", "all day", "02-09-2026", "11-21-2026");
+        
+        assertThrows(SQLException.class, () -> taskInfoTable.addTask(task2));
+        
+    }
+
+    @Test
+    void AddTask_DuplicateTaskNameForDifferentUsers_DoesNotThrowSQLException() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        TaskModel task2 = new TaskModel(2, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        
+        assertDoesNotThrow(() -> taskInfoTable.addTask(task2));
+        
+    }
+
+    @Test
+    void AddTask_DuplicateOtherTaskInfo_DoesNotThrowSQLException() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        TaskModel task2 = new TaskModel(1, "write", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        
+        assertDoesNotThrow(() -> taskInfoTable.addTask(task2));
+        
+    }
+
+    @Test
+    void AddTask_NameWithSqlCharacters_StoredExactly() throws SQLException {
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        int userId = userTable.getUserId(user.getUsername());
+
+        String attemptedInjection = "x'); DROP TABLE genTaskTable;--";
+        TaskModel task = new TaskModel(userId, attemptedInjection, 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        TaskModel found = taskInfoTable.getSingleTask(userId, attemptedInjection);
+        assertNotNull(found);
+        assertEquals(attemptedInjection, found.getTaskName());
     }
 
 

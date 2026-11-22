@@ -227,6 +227,67 @@ public class TaskInfoTableTests {
         }
     }
 
+    @Test
+    void DeleteTask_DiffUsersHaveSameTaskName_TaskForCorrectUserIsDeleted() throws SQLException{
+
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
+        userTable.addUser(user2);
+
+        TaskModel tasks = new TaskModel(userTable.getUserId(user2.getUsername()), "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(tasks);
+
+        String query = "SELECT COUNT(*) FROM genTaskTable WHERE userId = 2 AND taskName = 'read'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        taskInfoTable.deleteTask(userTable.getUserId(user2.getUsername()), task.getTaskName());
+
+        query = "SELECT COUNT(*) FROM genTaskTable WHERE userId = 1 AND taskName = 'read'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+
+        query = "SELECT COUNT(*) FROM genTaskTable WHERE userId = 2 AND taskName = 'read'";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(0, rs.getInt(1));
+        }
+    }
+
+    @Test
+    void DeleteTask_InjectionString_DeletesNothing() throws SQLException {
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        String attemptedInjection = "' OR '1'='1";
+        int numRowsDeleted = taskInfoTable.deleteTask(userTable.getUserId(user.getUsername()), attemptedInjection);
+
+        assertEquals(0, numRowsDeleted);
+        assertNotNull(taskInfoTable.getSingleTask(userTable.getUserId(user.getUsername()), "read"));
+    }
+
 
 
     @Test

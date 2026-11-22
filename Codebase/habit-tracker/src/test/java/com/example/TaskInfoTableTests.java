@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.sqlite.SQLiteException;
 
 public class TaskInfoTableTests {
     private String dbFile = "habitTrackerTestTemp.db";
@@ -148,6 +149,14 @@ public class TaskInfoTableTests {
         TaskModel found = taskInfoTable.getSingleTask(userId, attemptedInjection);
         assertNotNull(found);
         assertEquals(attemptedInjection, found.getTaskName());
+    }
+
+    @Test
+    void AddTask_userNotExist_ThrowsSQLiteException() throws SQLException {
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+    
+        assertThrows(SQLiteException.class, () -> taskInfoTable.addTask(task));
     }
 
 

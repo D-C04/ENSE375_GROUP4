@@ -407,6 +407,23 @@ public class TaskInfoTableTests {
 
     }
 
+    @Test
+    void UpdateTaskName_ChangeToExistingName_ThrowsSQLiteExceptionNameIsNotChanged() throws SQLException{
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        TaskModel task2 = new TaskModel(1, "walk", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task2);
+
+        assertThrows(SQLiteException.class, () -> taskInfoTable.updateTaskName(userTable.getUserId(user.getUsername()), "walk", "read"));
+
+        assertNotNull(taskInfoTable.getSingleTask(userTable.getUserId(user.getUsername()), "walk"));
+
+    }
+
 
 
     @Test

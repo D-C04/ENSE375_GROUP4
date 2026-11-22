@@ -15,10 +15,7 @@ public class TaskLogTable {
 
     public void addLog(TaskLogModel taskLog) throws SQLException{
 
-        
-
-
-        String sql = "INSERT INTO taskLogTable (userId, taskId, taskLogDate, isTaskComplete) " 
+        String sql = "INSERT OR REPLACE INTO taskLogTable (userId, taskId, taskLogDate, isTaskComplete) " 
             + "VALUES (?, ?, ?, ?)";
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){

@@ -405,7 +405,6 @@ public class TaskLogTableTests {
 
         TaskModel task2 = new TaskModel(1, "walk", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task2);
-        int taskId2 = taskInfoTable.getTaskId(userId, task2.getTaskName());
 
 
         TaskLogModel taskLog = new TaskLogModel(1, 1, "01-12-2026", true);

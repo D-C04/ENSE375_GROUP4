@@ -1,7 +1,5 @@
 package com.example;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,7 +29,7 @@ public class TaskLogTable {
     }
 
     public int deleteTaskLog(int userId, int taskId, String taskDate) throws SQLException{
-        String query = "DELETE FROM taskLogTable WHERE taskLogDate = '01-12-2026'";
+        String query = "DELETE FROM taskLogTable WHERE taskLogDate = '01-12-2026' AND taskId = 1;";
         try (Connection conn = db.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);){
 

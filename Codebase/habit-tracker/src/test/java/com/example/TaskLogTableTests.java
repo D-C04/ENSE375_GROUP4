@@ -344,6 +344,23 @@ public class TaskLogTableTests {
         assertEquals(1, result);
     }
 
+    @Test
+    void DeleteTaskLog_TaskLogDoesNotExist_ReturnsZero() throws SQLException{
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        // If a task is not added the foreign key constraint will fail
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
+
+        int result = taskLogTable.deleteTaskLog(userId, taskId, "01-12-2026");
+
+        assertEquals(0, result);
+    }
+
     
 
 }

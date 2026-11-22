@@ -361,6 +361,35 @@ public class TaskLogTableTests {
         assertEquals(0, result);
     }
 
+    @Test
+    void DeleteTaskLog_TwoTasksInTable_OneRowInTable() throws SQLException{
+        // If a user is not added the foreign key constraint will fail
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        // If a task is not added the foreign key constraint will fail
+        TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
+
+        TaskLogModel taskLog = new TaskLogModel(1, 1, "01-12-2026", true);
+        taskLogTable.addLog(taskLog);
+        TaskLogModel taskLog2 = new TaskLogModel(1, 1, "01-13-2026", true);
+        taskLogTable.addLog(taskLog2);
+
+        taskLogTable.deleteTaskLog(userId, taskId, "01-12-2026");
+
+        String query = "SELECT COUNT(*) FROM taskLogTable";
+        try (Connection conn = dbSetup.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            assertEquals(1, rs.getInt(1));
+        }
+    }
+
     
 
 }

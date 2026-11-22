@@ -45,10 +45,37 @@ public class TaskLogTable {
         }
     }
 
-    public List<TaskLogModel> getTaskLogsByDateAndUserId(int userId, String date){
+    public List<TaskLogModel> getTaskLogsByDateAndUserId(int userId, String searchDate) throws SQLException{
         List<TaskLogModel> taskLogList = new ArrayList<>();
 
-        return taskLogList;
+        String sql = "SELECT * FROM taskLogTable WHERE userId = ? AND taskLogDate = ?";
+
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setInt(1, userId);
+                ps.setString(2, searchDate);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {             
+                        return taskLogList;
+                    }
+                    else{
+                        do{
+                            int correspondingUserId = rs.getInt("userId");
+                            int correspondingTaskId = rs.getInt("taskId");
+                            String date = rs.getString("taskLogDate");
+                            boolean isComplete = rs.getBoolean("isTaskComplete");
+
+                            TaskLogModel newTaskLog = new TaskLogModel(correspondingUserId, correspondingTaskId, date, isComplete);
+                            taskLogList.add(newTaskLog);
+                        }
+                        while(rs.next());
+                    }                          
+                }
+
+                return taskLogList;
+            }
+        }
     }
 
 

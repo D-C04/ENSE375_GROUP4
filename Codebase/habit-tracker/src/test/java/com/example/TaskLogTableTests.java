@@ -433,7 +433,6 @@ public class TaskLogTableTests {
 
         UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
         userTable.addUser(user2);
-        int userId2 = userTable.getUserId(user2.getUsername());
 
 
         // If a task is not added the foreign key constraint will fail

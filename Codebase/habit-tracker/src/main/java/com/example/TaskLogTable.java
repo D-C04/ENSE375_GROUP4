@@ -29,7 +29,7 @@ public class TaskLogTable {
     }
 
     public int deleteTaskLog(int userId, int taskId, String taskDate) throws SQLException{
-        String query = "DELETE FROM taskLogTable WHERE taskLogDate = '01-12-2026' AND taskId = 1;";
+        String query = "DELETE FROM taskLogTable WHERE taskLogDate = '01-12-2026' AND taskId = 1 AND userId = 1;";
         try (Connection conn = db.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);){
 

@@ -1,5 +1,7 @@
 package com.example;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,7 +31,14 @@ public class TaskLogTable {
     }
 
     public int deleteTaskLog(int userId, int taskId, String taskDate) throws SQLException{
-        return 1;
+        String query = "SELECT COUNT(*) FROM taskLogTable";
+        try (Connection conn = db.openConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();) {
+            rs.next();
+
+            return rs.getInt(1);
+        }
     }
 
 

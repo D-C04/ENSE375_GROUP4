@@ -28,14 +28,18 @@ public class TaskLogTable {
         }
     }
 
-    public int deleteTaskLog(int userId, int taskId, String taskDate) throws SQLException{
-        String query = "DELETE FROM taskLogTable WHERE taskLogDate = '01-12-2026' AND taskId = 1 AND userId = 1;";
-        try (Connection conn = db.openConnection();
-            PreparedStatement ps = conn.prepareStatement(query);){
+    public int deleteTaskLog(int userId, int taskId, String taskLogDate) throws SQLException{
 
-            int numRowsDeleted = ps.executeUpdate();
+        String sql = "DELETE FROM taskLogTable WHERE userId = ? AND taskId = ? AND taskLogDate = ?;";
+        try(Connection conn = db.openConnection()){
+            try(PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setInt(1, userId);
+                ps.setInt(2, taskId);
+                ps.setString(3, taskLogDate);
+                int numRowsDeleted = ps.executeUpdate();
 
-            return numRowsDeleted;
+                return numRowsDeleted;
+            }
         }
     }
 

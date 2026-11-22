@@ -238,28 +238,32 @@ public class TaskLogTableTests {
     }
 
     @Test
-    void AddTaskLog_DupeTaskIdDupeDateDiffUserId_BothLogsInTable() throws SQLException{
+    void AddTaskLog_DupeDateDiffUserId_BothLogsInTable() throws SQLException{
 
         // If a user is not added the foreign key constraint will fail
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
         userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
 
         UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
         userTable.addUser(user2);
+        int userId2 = userTable.getUserId(user2.getUsername());
 
 
         // If a task is not added the foreign key constraint will fail
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "01-21-2026");
         taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
 
         TaskModel task2 = new TaskModel(2, "read", 2, "pages", "morning", "01-09-2026", "01-21-2026");
         taskInfoTable.addTask(task2);
+        int taskId2 = taskInfoTable.getTaskId(userId2, task2.getTaskName());
 
 
-        TaskLogModel taskLog = new TaskLogModel(1, 1, "01-12-2026", true);
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
         taskLogTable.addLog(taskLog);
 
-        TaskLogModel taskLog2 = new TaskLogModel(2, 1, "01-12-2026", true);
+        TaskLogModel taskLog2 = new TaskLogModel(userId2, taskId2, "01-12-2026", true);
         taskLogTable.addLog(taskLog2);
 
 
@@ -272,7 +276,7 @@ public class TaskLogTableTests {
             assertEquals(1, rs.getInt(1));
         }
 
-        query = "SELECT COUNT(*) FROM taskLogTable WHERE userId = 2 AND taskId = 1 AND taskLogDate = '01-12-2026' AND isTaskComplete = true;";
+        query = "SELECT COUNT(*) FROM taskLogTable WHERE userId = 2 AND taskId = 2 AND taskLogDate = '01-12-2026' AND isTaskComplete = true;";
         try (Connection conn = dbSetup.openConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();) {
@@ -288,19 +292,22 @@ public class TaskLogTableTests {
         // If a user is not added the foreign key constraint will fail
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
         userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
 
         // If a task is not added the foreign key constraint will fail
         TaskModel task = new TaskModel(1, "read", 2, "pages", "morning", "01-09-2026", "01-21-2026");
         taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
 
         TaskModel task2 = new TaskModel(1, "walk", 2, "pages", "morning", "01-09-2026", "01-21-2026");
         taskInfoTable.addTask(task2);
+        int taskId2 = taskInfoTable.getTaskId(userId, task2.getTaskName());
 
 
-        TaskLogModel taskLog = new TaskLogModel(1, 1, "01-12-2026", true);
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
         taskLogTable.addLog(taskLog);
 
-        TaskLogModel taskLog2 = new TaskLogModel(1, 2, "01-12-2026", true);
+        TaskLogModel taskLog2 = new TaskLogModel(userId, taskId2, "01-12-2026", true);
         taskLogTable.addLog(taskLog2);
 
 
@@ -373,9 +380,9 @@ public class TaskLogTableTests {
         taskInfoTable.addTask(task);
         int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
 
-        TaskLogModel taskLog = new TaskLogModel(1, 1, "01-12-2026", true);
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
         taskLogTable.addLog(taskLog);
-        TaskLogModel taskLog2 = new TaskLogModel(1, 1, "01-13-2026", true);
+        TaskLogModel taskLog2 = new TaskLogModel(userId, taskId, "01-13-2026", true);
         taskLogTable.addLog(taskLog2);
 
         taskLogTable.deleteTaskLog(userId, taskId, "01-12-2026");
@@ -405,11 +412,12 @@ public class TaskLogTableTests {
 
         TaskModel task2 = new TaskModel(1, "walk", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task2);
+        int taskId2 = taskInfoTable.getTaskId(userId, task2.getTaskName());
 
 
-        TaskLogModel taskLog = new TaskLogModel(1, 1, "01-12-2026", true);
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
         taskLogTable.addLog(taskLog);
-        TaskLogModel taskLog2 = new TaskLogModel(1, 2, "01-12-2026", true);
+        TaskLogModel taskLog2 = new TaskLogModel(userId, taskId2, "01-12-2026", true);
         taskLogTable.addLog(taskLog2);
 
         taskLogTable.deleteTaskLog(userId, taskId, "01-12-2026");
@@ -425,7 +433,7 @@ public class TaskLogTableTests {
     }
 
     @Test
-    void DeleteTaskLog_TwoTasksInTableWithSameDateSameTaskIdDiffUserId_OneRowInTable() throws SQLException{
+    void DeleteTaskLog_DeletedMultTaskLogs_ZeroRowsInTable() throws SQLException{
         // If a user is not added the foreign key constraint will fail
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
         userTable.addUser(user);
@@ -433,6 +441,7 @@ public class TaskLogTableTests {
 
         UserModel user2 = new UserModel("username2", "123456789", "gmail@gmail.com");
         userTable.addUser(user2);
+        int userId2 = userTable.getUserId(user2.getUsername());
 
 
         // If a task is not added the foreign key constraint will fail
@@ -442,14 +451,16 @@ public class TaskLogTableTests {
 
         TaskModel task2 = new TaskModel(2, "read", 2, "pages", "morning", "01-09-2026", "12-21-2026");
         taskInfoTable.addTask(task2);
+        int taskId2 = taskInfoTable.getTaskId(userId2, task2.getTaskName());
 
 
-        TaskLogModel taskLog = new TaskLogModel(1, 1, "01-12-2026", true);
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
         taskLogTable.addLog(taskLog);
-        TaskLogModel taskLog2 = new TaskLogModel(2, 1, "01-12-2026", true);
+        TaskLogModel taskLog2 = new TaskLogModel(userId2, taskId2, "01-12-2026", true);
         taskLogTable.addLog(taskLog2);
 
         taskLogTable.deleteTaskLog(userId, taskId, "01-12-2026");
+        taskLogTable.deleteTaskLog(userId2, taskId2, "01-12-2026");
 
         String query = "SELECT COUNT(*) FROM taskLogTable";
         try (Connection conn = dbSetup.openConnection();
@@ -457,7 +468,7 @@ public class TaskLogTableTests {
             ResultSet rs = ps.executeQuery();) {
             rs.next();
 
-            assertEquals(1, rs.getInt(1));
+            assertEquals(0, rs.getInt(1));
         }
     }
 

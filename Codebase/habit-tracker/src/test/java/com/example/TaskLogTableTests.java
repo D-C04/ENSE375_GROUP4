@@ -330,6 +330,8 @@ public class TaskLogTableTests {
         }
     }
     
+
+
     @Test
     void DeleteTaskLog_FirstTask_ReturnsOne() throws SQLException{
 
@@ -470,6 +472,17 @@ public class TaskLogTableTests {
 
             assertEquals(0, rs.getInt(1));
         }
+    }
+
+
+
+    @Test
+    void GetTaskLogsByUserIdAndDate_UserDoesNotExist_EmptyListIsReturned() throws SQLException{
+
+        List<TaskModel> userTaskArray = taskLogTable.getTaskLogsByDateAndUserId(1, "01-12-2026");
+
+        assertTrue(userTaskArray.isEmpty());
+
     }
 
     

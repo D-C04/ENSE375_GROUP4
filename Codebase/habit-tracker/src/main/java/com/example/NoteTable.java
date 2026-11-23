@@ -11,7 +11,7 @@ import java.sql.SQLException;
  * All methods in this class use prepared statements to prevent SQL injection.
  * Methods open and close their own database connections.
  * 
- * noteTable columns in order: noteId (primary key),
+ * noteTable columns in order: noteId (primary key, auto-increment), -- Do not insert values into this one
  *                             userId (foreign key, references userTable.userId),
  *                             noteText (text, not null),
  *                             noteDate (text, unique with userId, not null)

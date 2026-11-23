@@ -12,7 +12,7 @@ import java.util.List;
  * All methods in this class use prepared statements to prevent SQL injection.
  * Methods open and close their own database connections.
  * 
- * taskLogTable columns in order: taskLogId (primary key),
+ * taskLogTable columns in order: taskLogId (primary key, auto-increment), -- Do not insert values into this one
  *                                userId (foreign key, references userTable.userId),
  *                                taskId (foreign key, references taskInfoTable.taskId),
  *                                taskLogDate (text, unique with userId and taskId, not null),

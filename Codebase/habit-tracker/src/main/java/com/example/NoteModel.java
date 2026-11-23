@@ -7,9 +7,9 @@ package com.example;
  */
 public class NoteModel {
 
-    private int correspondingUserId;
-    private String noteText;
-    private String noteDate; 
+    private final int correspondingUserId;
+    private final String noteText;
+    private final String noteDate; 
 
     public NoteModel(int correspondingUserId, String noteText, String noteDate){
         this.correspondingUserId = correspondingUserId;

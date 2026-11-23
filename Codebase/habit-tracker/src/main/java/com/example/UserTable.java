@@ -10,7 +10,7 @@ import java.sql.SQLException;
  * All methods in this class use prepared statements to prevent SQL injection.
  * Methods open and close their own database connections.
  * 
- * userTable columns in order: userId (primary key),
+ * userTable columns in order: userId (primary key, auto-increment), -- Do not insert values into this one
  *                             username (text, unique, not null),
  *                             passwordHash (text, not null),
  *                             email (text, unique, not null)

@@ -12,7 +12,7 @@ import java.util.List;
  * All methods in this class use prepared statements to prevent SQL injection.
  * Methods open and close their own database connections.
  * 
- * taskInfoTable columns in order: taskId (primary key),
+ * taskInfoTable columns in order: taskId (primary key, auto-increment), -- Do not insert values into this one
  *                                 userId (foreign key, references userTable.userId),
  *                                 taskName (text, unique with userId, not null),
  *                                 taskGoal (integer, not null),
@@ -473,7 +473,7 @@ public class TaskInfoTable {
      */
     public int getTaskId(int userId, String taskName) throws SQLException{
 
-        String sql = "SELECT taskID FROM genTaskTable WHERE userID = ? AND taskName = ?";
+        String sql = "SELECT taskId FROM genTaskTable WHERE userId = ? AND taskName = ?";
 
         try(Connection conn = db.openConnection()){
             try(PreparedStatement ps = conn.prepareStatement(sql)){

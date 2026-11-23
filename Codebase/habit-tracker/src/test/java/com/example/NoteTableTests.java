@@ -113,7 +113,6 @@ public class NoteTableTests {
         userTable.addUser(user);
         int userId = userTable.getUserId(user.getUsername());
 
-        // If a task is not added the foreign key constraint will fail
         NoteModel note = new NoteModel(userId, "This is a note.", "12-12-2012");
         noteTable.addNote(note);
 
@@ -277,7 +276,7 @@ public class NoteTableTests {
         NoteModel note = new NoteModel(userId, "This is a note.", "12-12-2012");
         noteTable.addNote(note);
 
-        NoteModel userNote = noteTable.getSingleNote(1, "12-12-2012");
+        NoteModel userNote = noteTable.getSingleNote(userId, "12-12-2012");
 
         assertNotNull(userNote);
 
@@ -293,7 +292,7 @@ public class NoteTableTests {
         NoteModel note = new NoteModel(userId, "This is a note.", "12-12-2012");
         noteTable.addNote(note);
 
-        NoteModel userNote = noteTable.getSingleNote(1, "12-12-2012");
+        NoteModel userNote = noteTable.getSingleNote(userId, "12-12-2012");
 
         assertEquals(userTable.getUserId(user.getUsername()), userNote.getCorrespondingUserId());
         assertEquals("This is a note.", userNote.getNoteText());
@@ -314,7 +313,7 @@ public class NoteTableTests {
         NoteModel note2 = new NoteModel(userId, "This is a note.", "12-13-2012");
         noteTable.addNote(note2);
 
-        NoteModel userNote = noteTable.getSingleNote(1, "12-13-2012");
+        NoteModel userNote = noteTable.getSingleNote(userId, "12-13-2012");
 
         assertEquals(userTable.getUserId(user.getUsername()), userNote.getCorrespondingUserId());
         assertEquals("This is a note.", userNote.getNoteText());
@@ -332,7 +331,7 @@ public class NoteTableTests {
         NoteModel note = new NoteModel(userId, "This is a note.", "12-12-2012");
         noteTable.addNote(note);
 
-        NoteModel userNote = noteTable.getSingleNote(1, "12-13-2012");
+        NoteModel userNote = noteTable.getSingleNote(userId, "12-13-2012");
 
         assertNull(userNote);
 

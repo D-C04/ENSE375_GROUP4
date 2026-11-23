@@ -8,10 +8,10 @@ package com.example;
  */
 public class TaskLogModel {
 
-    private int correspondingUserId;
-    private int correspondingTaskId;
-    private String taskLogDate;
-    private boolean isTaskComplete;
+    private final int correspondingUserId;
+    private final int correspondingTaskId;
+    private final String taskLogDate;
+    private final boolean isTaskComplete;
 
     public TaskLogModel(int correspondingUserId, int correspondingTaskId, String taskLogDate, boolean isTaskComplete){
         this.correspondingUserId = correspondingUserId;

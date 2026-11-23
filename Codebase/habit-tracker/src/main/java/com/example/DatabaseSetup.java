@@ -94,17 +94,17 @@ public class DatabaseSetup {
             String sqlCreateGenTaskTable = """
                 CREATE TABLE IF NOT EXISTS `genTaskTable` ( `taskId` integer not null primary key autoincrement, `userId`
                  INTEGER not null, `taskName` TEXT not null, `taskGoal` INT not null, `taskUnit` TEXT not null, `taskTimeOfDay` 
-                 TEXT not null, `taskStartDate` TEXT not null, `taskEndDate` TEXT null, `taskIcon` TEXT not null, 
+                 TEXT not null, `taskStartDate` TEXT not null, `taskEndDate` TEXT not null, UNIQUE (userId, taskName) 
                  FOREIGN KEY (userId) REFERENCES userTable(userId) ON DELETE CASCADE ) STRICT
             """;
             s.execute(sqlCreateGenTaskTable);
 
             // Task Log Table
             String sqlCreateTaskLogTable = """
-                CREATE TABLE IF NOT EXISTS `taskLogTable` ( `taskLogId` integer not null primary key autoincrement, `taskId` 
-                INTEGER not null, `userId` INTEGER not null, `taskLogDate` TEXT not null, `isTaskComplete` INT not null, 
-                FOREIGN KEY (userId) REFERENCES userTable(userId) ON DELETE CASCADE, FOREIGN KEY (taskId) REFERENCES
-                genTaskTable(taskId)) STRICT
+                CREATE TABLE IF NOT EXISTS `taskLogTable` ( `taskLogId` integer not null primary key autoincrement, `userId`
+                INTEGER not null, `taskId` INTEGER not null, `taskLogDate` TEXT not null, `isTaskComplete` INT not null,
+                UNIQUE (userId, taskId, taskLogDate), FOREIGN KEY (userId) REFERENCES userTable(userId) ON DELETE CASCADE, FOREIGN KEY (taskId) REFERENCES
+                genTaskTable(taskId) ON DELETE CASCADE) STRICT
             """;
             s.execute(sqlCreateTaskLogTable);
 

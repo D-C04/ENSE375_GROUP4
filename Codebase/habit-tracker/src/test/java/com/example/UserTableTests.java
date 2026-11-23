@@ -6,40 +6,39 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+/**
+ * UserTableTests - Test file for the UserTable class.
+ */
 public class UserTableTests {
 
     private String dbFile = "habitTrackerTestTemp.db";
     private DatabaseSetup dbSetup;
     private UserTable userTable;
 
+
+
+    // Creates a brand new temp database for each test
     @TempDir
     Path tempDir;
 
-    // Creates a brand new temp database for each test
     @BeforeEach 
     void init() throws Exception {
-        Files.deleteIfExists(Path.of(dbFile));
         dbSetup = new DatabaseSetup(tempDir, dbFile);  
         dbSetup.createTables();
         userTable = new UserTable(dbSetup);
     }
 
-    @AfterEach 
-    void clear() throws Exception {
-        Files.deleteIfExists(Path.of(dbFile));
-    }
+
 
     @Test
     void AddUser_NumOfRowsInTable_One() throws SQLException{

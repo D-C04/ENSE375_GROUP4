@@ -19,16 +19,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.sqlite.SQLiteException;
 
+/**
+ * TaskInfoTableTests - Test file for the TaskInfoTable class.
+ */
 public class TaskInfoTableTests {
     private String dbFile = "habitTrackerTestTemp.db";
     private DatabaseSetup dbSetup;
     private TaskInfoTable taskInfoTable;
     private UserTable userTable;
 
+
+    
+    // Creates a brand new temp database for each test
     @TempDir
     Path tempDir;
 
-    // Creates a brand new temp database for each test
     @BeforeEach 
     void init() throws Exception {
         dbSetup = new DatabaseSetup(tempDir, dbFile);  

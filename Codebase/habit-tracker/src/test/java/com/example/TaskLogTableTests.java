@@ -1,10 +1,6 @@
 package com.example;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
@@ -17,8 +13,10 @@ import java.sql.ResultSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.sqlite.SQLiteException;
 
+/**
+ * TaskLogTableTests - Test file for the TaskLogTable class.
+ */
 public class TaskLogTableTests {
 
     private String dbFile = "habitTrackerTestTemp.db";
@@ -27,10 +25,12 @@ public class TaskLogTableTests {
     private UserTable userTable;
     private TaskLogTable taskLogTable;
 
+    
+
+    // Creates a brand new temp database for each test
     @TempDir
     Path tempDir;
 
-    // Creates a brand new temp database for each test
     @BeforeEach 
     void init() throws Exception {
         dbSetup = new DatabaseSetup(tempDir, dbFile);  
@@ -39,6 +39,8 @@ public class TaskLogTableTests {
         userTable = new UserTable(dbSetup);
         taskLogTable = new TaskLogTable(dbSetup);
     }
+
+
 
     @Test
     void AddTaskLog_FirstLog_OneRowInTable() throws SQLException{
@@ -486,7 +488,7 @@ public class TaskLogTableTests {
     }
 
     @Test
-    void GetTaskByTimeOfDay_userHasOneTaskOnThatDate_ListOfLengthOneIsReturned() throws SQLException{
+    void GetTaskLogsByUserIdAndDate_userHasOneLogOnThatDate_ListOfLengthOneIsReturned() throws SQLException{
         UserModel user = new UserModel("username1", "123456789", "email@email.com");
         userTable.addUser(user);
         int userId = userTable.getUserId(user.getUsername());
@@ -581,6 +583,76 @@ public class TaskLogTableTests {
         List<TaskLogModel> userTaskLogList = taskLogTable.getAllLogsForTask(userId, taskId);
 
         assertEquals(2, userTaskLogList.size());;
+
+    }
+
+
+    @Test
+    void GetTaskLogId_TaskLogDoesNotExist_NegativeOneIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "read", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
+
+        int taskLogId = taskLogTable.getTaskLogId(userId, taskId, "01-12-2026");
+
+        assertEquals(-1, taskLogId);
+
+    }
+
+    @Test
+    void GetTaskLogId_TaskLogDoesExist_OneIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "read", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+        int taskId = taskInfoTable.getTaskId(userId, task.getTaskName());
+
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId, "01-12-2026", true);
+        taskLogTable.addLog(taskLog);
+
+        int taskLogId = taskLogTable.getTaskLogId(userId, taskId, taskLog.getTaskLogDate());
+
+        assertEquals(1, taskLogId);
+
+    }
+
+    @Test
+    void GetTaskLogId_TaskLogDoesExist_LogIdIsReturnedNotTaskId() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+
+        TaskModel task = new TaskModel(userTable.getUserId(user.getUsername()), "read", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task);
+
+        TaskModel task2 = new TaskModel(userTable.getUserId(user.getUsername()), "walk", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task2);
+
+        TaskModel task3 = new TaskModel(userTable.getUserId(user.getUsername()), "run", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task3);
+
+        TaskModel task4 = new TaskModel(userTable.getUserId(user.getUsername()), "bike", 2, "pages", "all day", "01-09-2026", "12-21-2026");
+        taskInfoTable.addTask(task4);
+        int taskId4 = taskInfoTable.getTaskId(userId, task4.getTaskName());
+
+
+        TaskLogModel taskLog = new TaskLogModel(userId, taskId4, "01-12-2026", true);
+        taskLogTable.addLog(taskLog);
+
+        int taskLogId = taskLogTable.getTaskLogId(userId, taskId4, taskLog.getTaskLogDate());
+
+        // Should not equal 4
+        assertEquals(1, taskLogId);
 
     }
 

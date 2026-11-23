@@ -1,15 +1,11 @@
 package com.example;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +13,6 @@ import java.sql.ResultSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.sqlite.SQLiteException;
 
 
 public class NoteTableTests {
@@ -246,6 +241,101 @@ public class NoteTableTests {
 
             assertEquals(1, rs.getInt(1));
         }
+    }
+
+
+
+    @Test
+    void GetSingleNote_NoteDoesNotExist_NullIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        NoteModel userNote = noteTable.getSingleNote(userId, "12-12-2012");
+
+        assertNull(userNote);
+
+    }
+
+    @Test
+    void GetSingleNote_UserDoesNotExist_NullIsReturned() throws SQLException{
+
+        NoteModel userNote = noteTable.getSingleNote(1, "12-12-2012");
+
+        assertNull(userNote);
+
+    }
+
+    @Test
+    void GetSingleNote_NoteExists_NullIsNotReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        NoteModel note = new NoteModel(userId, "This is a note.", "12-12-2012");
+        noteTable.addNote(note);
+
+        NoteModel userNote = noteTable.getSingleNote(1, "12-12-2012");
+
+        assertNotNull(userNote);
+
+    }
+
+    @Test
+    void GetSingleNote_NoteExists_CorrectNoteObjectIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        NoteModel note = new NoteModel(userId, "This is a note.", "12-12-2012");
+        noteTable.addNote(note);
+
+        NoteModel userNote = noteTable.getSingleNote(1, "12-12-2012");
+
+        assertEquals(userTable.getUserId(user.getUsername()), userNote.getCorrespondingUserId());
+        assertEquals("This is a note.", userNote.getNoteText());
+        assertEquals("12-12-2012", userNote.getNoteDate());
+
+    }
+
+    @Test
+    void GetSingleNote_NoteExistsMultNotes_CorrectNoteObjectIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        NoteModel note = new NoteModel(userId, "This is a note.", "12-12-2012");
+        noteTable.addNote(note);
+
+        NoteModel note2 = new NoteModel(userId, "This is a note.", "12-13-2012");
+        noteTable.addNote(note2);
+
+        NoteModel userNote = noteTable.getSingleNote(1, "12-13-2012");
+
+        assertEquals(userTable.getUserId(user.getUsername()), userNote.getCorrespondingUserId());
+        assertEquals("This is a note.", userNote.getNoteText());
+        assertEquals("12-13-2012", userNote.getNoteDate());
+
+    }
+
+    @Test
+    void GetSingleNote_NoteForDayDoesNotExist_NullIsReturned() throws SQLException{
+
+        UserModel user = new UserModel("username1", "123456789", "email@email.com");
+        userTable.addUser(user);
+        int userId = userTable.getUserId(user.getUsername());
+
+        NoteModel note = new NoteModel(userId, "This is a note.", "12-12-2012");
+        noteTable.addNote(note);
+
+        NoteModel userNote = noteTable.getSingleNote(1, "12-13-2012");
+
+        assertNull(userNote);
+
     }
 
 }

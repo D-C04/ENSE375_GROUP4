@@ -30,26 +30,34 @@
                     <svg class="statistics-large-flame" viewBox="0 0 64 80" aria-hidden="true">
                         <path d="M33 1c3 15-3 20-9 27-4 5-7 11-7 18 0 12 9 21 21 21s21-9 21-21c0-11-6-20-16-29 1 9-2 14-7 17 2-12 0-23-3-33ZM38 43c6 5 9 9 9 14a9 9 0 0 1-18 0c0-5 3-9 9-14Z"/>
                     </svg>
-                    <span class="statistics-streak-value" th:text="${completedAllTasksStreak}">--</span>
+                    <span id="completed-all-tasks-streak" class="statistics-streak-value">--</span>
                 </div>
             </article>
             <article class="statistics-metric">
                 <h1>Average Daily Completion</h1>
                 <div class="statistics-metric-card">
-                    <span class="statistics-average-value" th:text="${averageDailyCompletion + '%'}">--%</span>
+                    <span id="average-daily-completion" class="statistics-average-value">--%</span>
                 </div>
             </article>
         </section>
 
         <section class="statistics-active" aria-labelledby="active-tasks-title">
-            <h2 id="active-tasks-title">Streak: Active Tasks</h2>
-            <h3>All Day</h3>
-            
-
-            <h3>Morning</h3>
-
-
-            <h3>Evening</h3>
+            <h2 id="active-tasks-title">Active Tasks</h2>
+            <div id="active-task-groups" aria-live="polite">
+                <section>
+                    <h3>All Day</h3>
+                    <ul data-time-of-day="all day"><li>Loading...</li></ul>
+                </section>
+                <section>
+                    <h3>Morning</h3>
+                    <ul data-time-of-day="morning"><li>Loading...</li></ul>
+                </section>
+                <section>
+                    <h3>Evening</h3>
+                    <ul data-time-of-day="evening"><li>Loading...</li></ul>
+                </section>
+            </div>
+            <p id="statistics-error" role="alert" hidden></p>
         </section>
     </main>
 
@@ -57,6 +65,54 @@
         <span class="logout-heart" aria-hidden="true">&hearts;</span>
         <span>Habit Tracker</span>
     </footer>
+    <script>
+        async function loadStatistics() {
+            const errorMessage = document.getElementById("statistics-error");
+            const taskLists = [...document.querySelectorAll("[data-time-of-day]")];
+            try {
+                const response = await fetch("/api/statistics", {
+                    headers: { "Accept": "application/json" }
+                });
+                if (!response.ok) {
+                    throw new Error("Statistics could not be loaded. Please log in and try again.");
+                }
+
+                const statistics = await response.json();
+                document.getElementById("completed-all-tasks-streak").textContent =
+                    statistics.completedAllTasksStreak;
+                document.getElementById("average-daily-completion").textContent =
+                    `${statistics.averageDailyCompletion}%`;
+
+                for (const list of taskLists) {
+                    list.replaceChildren();
+                    const timeOfDay = list.dataset.timeOfDay;
+                    const tasks = statistics.activeTasks.filter(task => task.timeOfDay === timeOfDay);
+                    if (tasks.length === 0) {
+                        const item = document.createElement("li");
+                        item.textContent = "No active tasks";
+                        list.append(item);
+                        continue;
+                    }
+
+                    for (const task of tasks) {
+                        const item = document.createElement("li");
+                        item.textContent = `${task.taskName} - ${task.completionFrequency}% completion`;
+                        list.append(item);
+                    }
+                }
+            } catch (error) {
+                for (const list of taskLists) {
+                    const item = document.createElement("li");
+                    item.textContent = "Statistics unavailable";
+                    list.replaceChildren(item);
+                }
+                errorMessage.textContent = error.message || "Statistics could not be loaded.";
+                errorMessage.hidden = false;
+            }
+        }
+
+        loadStatistics();
+    </script>
 </body>
 
 </html>

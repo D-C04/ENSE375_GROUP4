@@ -4,7 +4,7 @@ body {
 }
 
 h2 {
-    color: white;
+    color: rgb(245, 245, 245);
     font-size: 20px;
     position:absolute;
     left:20px;
@@ -33,16 +33,25 @@ p{
     position: absolute;
   
     top:15px;
-    left: 150px;
+    left: 210px;
 }
 
 h4 {
     color: #f7f8f9;
     position: absolute;
-  
     top:10px;
-    left:75px;
+    left:30px;
 
+}
+
+h6{
+    position: relative;
+    color: pink;
+    /* top:20px;
+    left:40px; */
+    margin-top: -135px;
+    margin-left: 150px;
+    font-size:17px;
 }
 
 .form-label-2{
@@ -106,7 +115,7 @@ h4 {
     top:95px;
     left:75px;
     border-radius: 5px;
-    background-color: rgb(222, 222, 222);
+    background-color: rgb(247, 246, 246);
 
 }
 
@@ -134,7 +143,7 @@ h4 {
     background-color: #1c1a1a;
     color:#f7f8f9;
     position: absolute;
-    top: 280px;
+    top: 350px;
     left: 70px;
     width: 450px;
     height:50px;
@@ -324,12 +333,12 @@ button{
     color:inherit
 }
 .error{
-    color:white;
-    font-size:.9rem;
+    color:red;
+    font-size:10px;
     min-height:1.2em;
     margin:0;
-    top: 200px;
-    left: 200px;
+    top: 520px;
+    left: 720px;
     font-size: 20px;
 
 }
@@ -416,4 +425,179 @@ button{
 }
 @media (prefers-reduced-motion: reduce)
 {.habit{transition:none}
+}
+
+/* .input-container .form-control-2,
+.input-container .form-label-1{
+    margin-left: 20px;
+    margin-top: 50px;
+}
+.input-container .form-label-2{
+    margin-left: 20px;
+    margin-top:50px;
+}
+.input-container .button1 {
+    position: static;
+    top: auto;
+    left: auto;
+} */
+
+/* .input-container .form-label-2 { 
+    display: block; 
+    margin-bottom: 50px; 
+    margin-top: 50px;
+}
+.input-container .form-control-2 { 
+    display: block; 
+    width: 450px; 
+    max-width: 100%; 
+    height: 35px; 
+    margin-top: 50px;
+} */
+/* Username */
+.input-container .row{
+    display: flex;
+    gap:20px;
+    flex-direction:column;
+}
+.form-label-user {
+    display: block;
+    margin-bottom: 20px;
+    margin-top: 80px;
+    margin-left:30px;
+    color: rgb(0, 0, 0);
+}
+
+.form-control-user {
+    display: block;
+    width: 450px;
+    max-width: 100%;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid #d13535;
+    padding: 0 10px;
+    background-color: rgb(201, 31, 31);
+    margin-top:80px;
+    margin-left:-160px;
+    margin-right:10px;
+}
+
+/* Password */
+.form-label-pass {
+    display: block;
+    margin-bottom: 20px;
+    margin-left:30px;
+    margin-top:60px;
+    color: white;
+}
+
+.form-control-pass {
+    display: block;
+    width: 450px;
+    max-width: 100%;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid #bbb;
+    padding: 0 10px;
+    background-color: rgb(222, 222, 222);
+    margin-top:60px;
+    margin-left:20px;
+    margin-right:40px;
+}
+
+.form-label-email {
+    display: block;
+    margin-bottom: 1px;
+    margin-left:30px;
+    margin-top:50px;
+    color: white;
+}
+
+.form-control-email {
+    display: block;
+    width: 450px;
+    max-width: 100%;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid #bbb;
+    padding: 0 10px;
+    background-color: rgb(222, 222, 222);
+    margin-top:40px;
+    margin-left:20px;
+    margin-right:40px;
+}
+
+
+.input-container .button1 { 
+    margin-top: -5px;
+    margin-left: 40px;
+    
+ }
+
+.button4{
+    width:70px;
+    border-radius: 20px;
+    height:50px;
+    position: absolute;
+    top:20px;
+    left:900px;
+    color: black;
+    background-color: pink;
+}
+
+.msg-error,
+.msg-ok {
+    margin: 20px 5px;
+    text-align: center;
+    color:red;
+}
+
+.input-container .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;               /* label to its input */
+    margin-bottom: 20px;    /* gap between fields */
+}
+
+.form-label-email,
+.form-label-user,
+.form-label-pass {
+    position: static;
+    margin: 0;
+    color: white;
+}
+
+.form-control-email,
+.form-control-user,
+.form-control-pass {
+    position: static;
+    display: block;
+    width: 450px;
+    max-width: 100%;
+    height: 35px;
+    margin: 0;
+    padding: 0 10px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    background-color: rgb(222, 222, 222);
+}
+.form-label-email,
+.form-control-email {
+    position: relative;
+    left: 30px;
+    top: 40px;
+}
+
+.form-label-user,
+.form-control-user {
+    position: relative;
+    left: 30px;
+    top: 45px;
+}
+
+.form-label-pass,
+.form-control-pass {
+    position: relative;
+    left: 30px;
+    top: 50px;
 }

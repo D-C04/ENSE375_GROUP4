@@ -1,38 +1,59 @@
 package com.example;
+
+import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class UserAuth {
-private final Map<String, String> users = new ConcurrentHashMap<>();
-private final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    //conditions for username and passwords:
-    //username:
-        //cannot be null
-        //cannot be used from before by another user
-        //has to be string: includes numbers, letters and special characters
-        //username length has to be greater than 7 characters
-    //password:
-        //has to be og length 8 and more
-        //includes all characters
-        //cannot be null
-    
-    public boolean SignUp (String username, String password){
-        if (username ==null || username.isBlank() ||username.length()<7) 
-            return false;
-        if (password ==null || password.isBlank() || password.length() <8)
-            return false;
-        return users.putIfAbsent(username.trim().toLowerCase(), encoder.encode(password)) ==null; //turn password into a BCrypt hash, then add username and pass to map if they are not already there
+    private static final Logger log = LoggerFactory.getLogger(UserAuth.class);
+
+    private final UserTable userTable;
+    private final PasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    public UserAuth(UserTable userTable) {
+        this.userTable = userTable;
     }
 
-    public boolean authorizeUser(String username, String password){
-        if(username==null ||password==null) 
+    // Username: at least 8 characters, unique. Password: at least 8 characters.
+    // Email: valid-looking and unique.
+    public boolean signUp(String username, String email, String password) {
+        if (username == null || email == null || password == null) return false;
+
+        String name = username.trim().toLowerCase();
+        String mail = email.trim().toLowerCase();
+
+        if (name.length() < 8) return false;
+        if (password.isBlank() || password.length() < 8) return false;
+        if (!mail.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) return false;
+
+        try {
+            if (userTable.doesUsernameExist(name) || userTable.doesEmailExist(mail)) {
+                return false;
+            }
+            userTable.addUser(new UserModel(name, encoder.encode(password), mail));
+            return true;
+        } catch (SQLException e) {
+            // Also catches the rare case where two people grab the same name at once
+            log.error("Sign up failed", e);
             return false;
-        String hash = users.get(username.trim().toLowerCase());//look for stored hash for that username
-        return hash != null && encoder.matches(password, hash); //check whether user exits or not
+        }
+    }
+
+    public boolean authorizeUser(String username, String password) {
+        if (username == null || password == null) return false;
+
+        try {
+            UserModel user = userTable.getUserByUsername(username.trim().toLowerCase());
+            return user != null && encoder.matches(password, user.getPasswordHash());
+        } catch (SQLException e) {
+            log.error("Login lookup failed", e);
+            return false;
+        }
     }
 }

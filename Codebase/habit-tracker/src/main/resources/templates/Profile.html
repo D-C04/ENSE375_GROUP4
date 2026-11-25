@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="profile-page">
+    <header class="logout-header profile-header">
+        <span class="logout-heart" aria-hidden="true">&hearts;</span>
+        <span>Habit Tracker</span>
+        <nav class="profile-nav" aria-label="Main navigation">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/Calendar.html">Calendar</a>
+            <a href="/Statistics.html">Statistics</a>
+        </nav>
+        <span class="profile-user-icon" aria-hidden="true"></span>
+    </header>
+    <main class="profile-content">
+        <section class="profile-summary" aria-labelledby="profile-title">
+            <span class="profile-avatar" aria-hidden="true"></span>
+            <h1 id="profile-title">Profile</h1>
+            <div class="profile-details">
+                <p>Username: <span th:text="${username}">username</span></p>
+                <p>Email: <span th:text="${email}">email@email.com</span></p>
+                <p>Password: <span th:text="${password}">••••••••••••••</span></p>
+            </div>
+            <div class="profile-actions">
+                <form method="post" action="/logout">
+                    <button type="submit">Log Out</button>
+                </form>
+                <form method="get" action="/editDetails">
+                    <button type="submit">Edit Details</button>
+                </form>
+            </div>
+            <form class="profile-delete" method="post" action="/deleteAccount">
+                <button type="submit">Delete Account</button>
+            </form>
+        </section>
+    </main>
+    <footer class="logout-footer profile-footer">
+        <span class="logout-heart" aria-hidden="true">&hearts;</span>
+        <span>Habit Tracker</span>
+    </footer>
+</body>
+</html>

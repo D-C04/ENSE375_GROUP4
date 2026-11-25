@@ -1,5 +1,5 @@
-com\example\TaskLogTableTests.class
-com\example\TaskInfoTableTests.class
-com\example\NoteTableTests.class
-com\example\DatabaseSetupTests.class
-com\example\UserTableTests.class
+com/example/NoteTableTests.class
+com/example/DatabaseSetupTests.class
+com/example/TaskLogTableTests.class
+com/example/TaskInfoTableTests.class
+com/example/UserTableTests.class

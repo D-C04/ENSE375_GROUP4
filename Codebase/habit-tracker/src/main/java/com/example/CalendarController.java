@@ -40,6 +40,7 @@ public class CalendarController {
         this.noteTable = new NoteTable(databaseSetup);
     }
 
+    @SuppressWarnings("null")
     @GetMapping("/api/calendar/month")
     public CalendarMonth getMonth(
             @RequestParam(required = false) Integer year,

@@ -71,6 +71,16 @@ public String signup(@RequestParam String username,
         return "dashboard";                    // templates/dashboard.html
     }
 
+    @GetMapping("/calendar")
+    public String calendarPage() {
+        return "forward:/Calendar.html";
+    }
+
+    @GetMapping("/statistics")
+    public String statisticsPage() {
+        return "forward:/Statistics.html";
+    }
+
     // ---------- Logout ----------
 
     @PostMapping("/logout")

@@ -65,6 +65,33 @@ public class TaskInfoTable {
     }
 
     /**
+     * Updates all task details for the given user and task ID.
+     *
+     * @return the number of updated rows
+     * @throws SQLException if the database cannot be accessed or the task name conflicts
+     */
+    public int updateTaskDetails(int userId, int taskId, TaskModel task) throws SQLException {
+        String sql = """
+                UPDATE genTaskTable
+                SET taskName = ?, taskGoal = ?, taskUnit = ?, taskTimeOfDay = ?, taskStartDate = ?, taskEndDate = ?
+                WHERE userId = ? AND taskId = ?
+                """;
+
+        try (Connection conn = db.openConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, task.getTaskName());
+            ps.setInt(2, task.getTaskGoalAmount());
+            ps.setString(3, task.getTaskUnit());
+            ps.setString(4, task.getTimeOfDay());
+            ps.setString(5, task.getStartDate());
+            ps.setString(6, task.getEndDate());
+            ps.setInt(7, userId);
+            ps.setInt(8, taskId);
+            return ps.executeUpdate();
+        }
+    }
+
+    /**
      * Deletes the info tied to the given userId and taskName from the database.
      * This will cause all taskLogs tied to the task to be deleted as well.
      * 

@@ -1,5 +1,6 @@
-com/example/NoteTableTests.class
 com/example/DatabaseSetupTests.class
+com/example/CalendarControllerTests.class
+com/example/NoteTableTests.class
 com/example/TaskLogTableTests.class
 com/example/TaskInfoTableTests.class
 com/example/UserTableTests.class

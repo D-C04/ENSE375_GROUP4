@@ -22,7 +22,10 @@ function buildChips(containerId, group, values, labelFn) {
 buildChips("times", "time", TIMES);
 //buildChips("icons", "icon", ICONS);
 
-function iso(d) { return d.toISOString().slice(0, 10); }
+function iso(d) {
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") +
+    "-" + String(d.getDate()).padStart(2, "0");
+}
 var today = new Date(), later = new Date(Date.now() + 30 * 864e5);
 document.getElementById("start").value = iso(today);
 document.getElementById("end").value = iso(later);
@@ -56,11 +59,11 @@ function fmt(dateStr) {
     el.querySelector("small").textContent =
       h.duration + " · " + h.time + " · " + fmt(h.start) + " to " + fmt(h.end);
 
-    el.querySelector(".done").addEventListener("click", function () { removeHabit(h.id, el); });
+    el.querySelector(".done").addEventListener("click", function () { completeHabit(h, el); });
     el.querySelector(".edit").addEventListener("click", function () { startEdit(h); });
     var del = el.querySelector(".del");
     del.addEventListener("click", function () {
-      if (del.dataset.armed) { removeHabit(h.id, el); return; }
+      if (del.dataset.armed) { deleteHabit(h, el); return; }
       del.dataset.armed = "1";
       del.textContent = "Confirm delete";
       setTimeout(function () { delete del.dataset.armed; del.textContent = "Delete"; }, 3000);
@@ -81,6 +84,61 @@ function removeHabit(id, el) {
         resetForm(); 
     else render();
   }, 250);
+}
+
+function taskPayload(data) {
+  return {
+    taskName: data.name,
+    startDate: data.start,
+    endDate: data.end,
+    duration: data.duration,
+    timeOfDay: data.time
+  };
+}
+
+async function sendTaskRequest(url, method, body) {
+  var response = await fetch(url, {
+    method: method,
+    headers: { "Content-Type": "application/json" },
+    body: body == null ? undefined : JSON.stringify(body)
+  });
+  if (!response.ok) throw new Error("Unable to save task (" + response.status + ").");
+  return method === "POST" ? response.json() : null;
+}
+
+async function completeHabit(habit, element) {
+  var error = document.getElementById("error");
+  error.textContent = "";
+  try {
+    if (habit.serverId != null) {
+      await sendTaskRequest(
+        "/api/calendar/tasks/" + encodeURIComponent(habit.serverId) +
+          "/completion?date=" + encodeURIComponent(iso(new Date())),
+        "PUT",
+        { completed: true }
+      );
+    }
+    removeHabit(habit.id, element);
+  } catch (requestError) {
+    error.textContent = requestError.message;
+  }
+}
+
+async function deleteHabit(habit, element) {
+  var error = document.getElementById("error");
+  error.textContent = "";
+  try {
+    if (habit.serverId != null) {
+      await sendTaskRequest(
+        "/api/calendar/tasks/" + encodeURIComponent(habit.serverId),
+        "DELETE",
+        null
+      );
+    }
+    removeHabit(habit.id, element);
+  } catch (requestError) {
+    error.textContent = requestError.message;
+  }
 }
 
 
@@ -121,7 +179,7 @@ function resetForm() {
 }
 
 document.getElementById("cancel-btn").addEventListener("click", resetForm);
-document.getElementById("habit-form").addEventListener("submit", function (e) {
+document.getElementById("habit-form").addEventListener("submit", async function (e) {
   e.preventDefault();
   var name = document.getElementById("name").value.trim();
   var start = document.getElementById("start").value;
@@ -143,17 +201,38 @@ document.getElementById("habit-form").addEventListener("submit", function (e) {
     //icon: document.querySelector('input[name="icon"]:checked').value
   };
 
-if (editingId != null) {      
-  habits = habits.map(function (h) {
-    return h.id === editingId ? Object.assign({ id: h.id }, data) : h;
-  });
-  save();
-  resetForm();
-} else {
-  data.id = Date.now();
-  habits.push(data);
-  save();
-  render();
-  document.getElementById("name").value = "";
-}});
+  try {
+    if (editingId != null) {
+      var existing = habits.find(function (habit) { return habit.id === editingId; });
+      if (existing.serverId != null) {
+        await sendTaskRequest(
+          "/api/calendar/tasks/" + encodeURIComponent(existing.serverId),
+          "PUT",
+          taskPayload(data)
+        );
+        data.id = existing.id;
+        data.serverId = existing.serverId;
+      } else {
+        var savedTask = await sendTaskRequest("/api/calendar/tasks", "POST", taskPayload(data));
+        data.id = savedTask.taskId;
+        data.serverId = savedTask.taskId;
+      }
+      habits = habits.map(function (h) {
+        return h.id === editingId ? data : h;
+      });
+      save();
+      resetForm();
+    } else {
+      var createdTask = await sendTaskRequest("/api/calendar/tasks", "POST", taskPayload(data));
+      data.id = createdTask.taskId;
+      data.serverId = createdTask.taskId;
+      habits.push(data);
+      save();
+      render();
+      document.getElementById("name").value = "";
+    }
+  } catch (requestError) {
+    error.textContent = requestError.message;
+  }
+});
 render();

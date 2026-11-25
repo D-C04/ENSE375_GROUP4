@@ -12,9 +12,10 @@
         <span class="logout-heart" aria-hidden="true">&hearts;</span>
         <span>Habit Tracker</span>
         <nav class="profile-nav" aria-label="Main navigation">
-            <a href="Dashboard.html">Dashboard</a>
-            <a href="Calendar.html" aria-current="page">Calendar</a>
-            <a href="Statistics.html">Statistics</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/calendar" aria-current="page">Calendar</a>
+            <a href="/statistics">Statistics</a>
+            <a href="/profile">Profile</a>
         </nav>
         <span class="profile-user-icon" aria-hidden="true"></span>
     </header>
@@ -40,6 +41,7 @@
                 </thead>
                 <tbody id="calendar-days"></tbody>
             </table>
+            <p class="calendar-legend"><span aria-hidden="true">&bull;</span> Task due</p>
             <p class="calendar-error" id="calendar-error" role="alert" hidden></p>
         </section>
 
@@ -47,30 +49,25 @@
             <h2 id="day-history-title">Day History <span id="selected-date"></span></h2>
             <div class="history-card">
                 <div class="history-status" role="group" aria-label="Day status">
-                    <button class="status-button is-active" type="button" aria-pressed="true">Completed</button>
-                    <button class="status-button" type="button" aria-pressed="false">Not Completed</button>
-                    <button class="status-button" type="button" aria-pressed="false">Final Day</button>
+                    <button class="status-button is-active" data-status="completed" type="button" aria-pressed="true">Completed</button>
+                    <button class="status-button" data-status="not-completed" type="button" aria-pressed="false">Not Completed</button>
+                    <button class="status-button" data-status="final-day" type="button" aria-pressed="false">Final Day</button>
                 </div>
-                <h3>All Day</h3>
-                <button class="habit-row is-complete" type="button" aria-pressed="true">
-                    <span>Drink water | 2 litres</span><span class="habit-check" aria-hidden="true"></span>
-                </button>
-                <h3>Morning</h3>
-                <button class="habit-row is-complete" type="button" aria-pressed="true">
-                    <span>Read | 15 min</span><span class="habit-check" aria-hidden="true"></span>
-                </button>
-                <button class="habit-row is-complete" type="button" aria-pressed="true">
-                    <span>Read | 15 min</span><span class="habit-check" aria-hidden="true"></span>
-                </button>
-                <button class="habit-row is-complete" type="button" aria-pressed="true">
-                    <span>Read | 15 min</span><span class="habit-check" aria-hidden="true"></span>
-                </button>
+                <form class="task-entry" id="task-form">
+                    <label class="visually-hidden" for="task-name">New task</label>
+                    <input id="task-name" name="taskName" type="text" maxlength="100" placeholder="Add a task" required>
+                    <button type="submit">Add</button>
+                </form>
+                <p class="day-error" id="task-error" role="alert" hidden></p>
+                <div id="day-tasks" aria-live="polite"></div>
             </div>
         </section>
 
         <section class="calendar-notes" aria-labelledby="calendar-notes-title">
             <h2 id="calendar-notes-title">Notes</h2>
-            <textarea aria-label="Notes for the selected day">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ornare eros ac varius mattis. Integer ultrices enim in est imperdiet ultricies. Cras sit amet odio ut quam mattis laoreet. Praesent eleifend felis nec efficitur efficitur. Vestibulum justo enim, fermentum vitae lacus a, venenatis luctus quam. Phasellus sollicitudin, urna eu consectetur congue, metus mauris hendrerit nunc, nec lacinia leo dui ac ligula. Proin bibendum, sapien quis scelerisque vulputate, lectus leo hendrerit sapien, a elementum nibh tellus non lorem. Nunc congue luctus nibh ut sapien, et scelerisque tellus, eget ultricies arcu suscipit in. Donec placerat laoreet aliquet.</textarea>
+            <textarea id="calendar-note" aria-label="Notes for the selected day"></textarea>
+            <button class="save-note-button" id="save-note" type="button">Save Notes</button>
+            <p class="day-error" id="note-error" role="alert" hidden></p>
         </section>
     </main>
 
@@ -84,9 +81,29 @@
         const calendarDays = document.getElementById("calendar-days");
         const selectedDateLabel = document.getElementById("selected-date");
         const calendarError = document.getElementById("calendar-error");
+        const dayTasks = document.getElementById("day-tasks");
+        const taskError = document.getElementById("task-error");
+        const noteError = document.getElementById("note-error");
+        const noteInput = document.getElementById("calendar-note");
         let displayedMonth;
         let selectedDay;
         let today;
+        let activeStatus = "completed";
+
+        function setActiveStatus(status) {
+            activeStatus = status;
+            document.querySelectorAll(".status-button").forEach((button) => {
+                const isActive = button.dataset.status === status;
+                button.classList.toggle("is-active", isActive);
+                button.setAttribute("aria-pressed", String(isActive));
+            });
+        }
+
+        function selectedDateIso() {
+            const month = String(displayedMonth.month).padStart(2, "0");
+            const day = String(selectedDay).padStart(2, "0");
+            return `${displayedMonth.year}-${month}-${day}`;
+        }
 
         function updateSelectedDay() {
             const date = new Date(displayedMonth.year, displayedMonth.month - 1, selectedDay);
@@ -100,6 +117,86 @@
                 button.classList.toggle("is-selected", isSelected);
                 button.setAttribute("aria-pressed", String(isSelected));
             });
+            loadDay();
+        }
+
+        function renderTasks(tasks) {
+            dayTasks.replaceChildren();
+            const visibleTasks = tasks.filter((task) => {
+                if (task.completed) return activeStatus === "completed";
+                if (task.finalDay) return activeStatus === "final-day";
+                return activeStatus === "not-completed";
+            });
+            const sections = [
+                ["all day", "All Day"],
+                ["morning", "Morning"],
+                ["evening", "Evening"]
+            ];
+            sections.forEach(([timeOfDay, heading]) => {
+                const groupedTasks = visibleTasks.filter(
+                    (task) => (task.timeOfDay || "all day").toLowerCase() === timeOfDay
+                );
+                if (groupedTasks.length === 0) return;
+                const title = document.createElement("h3");
+                title.textContent = heading;
+                dayTasks.append(title);
+                groupedTasks.forEach((task) => {
+                    const button = document.createElement("button");
+                    button.className = `habit-row${task.completed ? " is-complete" : ""}`;
+                    button.type = "button";
+                    button.setAttribute("aria-pressed", String(task.completed));
+                    const label = document.createElement("span");
+                    label.textContent = `${task.taskName} | ${task.goal} ${task.unit}`;
+                    const check = document.createElement("span");
+                    check.className = "habit-check";
+                    check.setAttribute("aria-hidden", "true");
+                    button.append(label, check);
+                    button.addEventListener("click", async () => {
+                        taskError.hidden = true;
+                        try {
+                            const response = await fetch(
+                                `/api/calendar/tasks/${task.taskId}/completion?date=${encodeURIComponent(selectedDateIso())}`,
+                                {
+                                    method: "PUT",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ completed: !task.completed })
+                                }
+                            );
+                            if (!response.ok) throw new Error(`Could not update task (${response.status}).`);
+                            setActiveStatus(
+                                !task.completed ? "completed" : task.finalDay ? "final-day" : "not-completed"
+                            );
+                            await loadDay();
+                        } catch (error) {
+                            taskError.textContent = error.message;
+                            taskError.hidden = false;
+                        }
+                    });
+                    dayTasks.append(button);
+                });
+            });
+            if (visibleTasks.length === 0) {
+                const emptyMessage = document.createElement("p");
+                emptyMessage.className = "empty-day";
+                emptyMessage.textContent = "No tasks in this tab for the selected day.";
+                dayTasks.append(emptyMessage);
+            }
+        }
+
+        async function loadDay() {
+            taskError.hidden = true;
+            noteError.hidden = true;
+            try {
+                const response = await fetch(`/api/calendar/day?date=${encodeURIComponent(selectedDateIso())}`);
+                if (!response.ok) throw new Error(`Could not load this day (${response.status}).`);
+                const data = await response.json();
+                renderTasks(data.tasks);
+                noteInput.value = data.note;
+            } catch (error) {
+                dayTasks.replaceChildren();
+                taskError.textContent = error.message;
+                taskError.hidden = false;
+            }
         }
 
         async function renderMonth(year, month) {
@@ -117,6 +214,7 @@
                 const data = await response.json();
                 displayedMonth = { year: data.year, month: data.month };
                 today = data.today;
+                const dueDays = new Set(data.dueDays);
                 monthTitle.textContent = `${data.monthName}, ${data.year}`;
 
                 const previousMonth = displayedMonth.month === 1
@@ -154,6 +252,13 @@
                                 day: "numeric",
                                 year: "numeric"
                             }));
+                            if (dueDays.has(dayNumber)) {
+                                button.classList.add("has-due-task");
+                                button.setAttribute(
+                                    "aria-label",
+                                    `${button.getAttribute("aria-label")}, task due`
+                                );
+                            }
                             if (today.year === displayedMonth.year
                                 && today.month === displayedMonth.month
                                 && today.day === dayNumber) {
@@ -183,19 +288,44 @@
 
         document.querySelectorAll(".status-button").forEach((button) => {
             button.addEventListener("click", () => {
-                document.querySelectorAll(".status-button").forEach((statusButton) => {
-                    const isActive = statusButton === button;
-                    statusButton.classList.toggle("is-active", isActive);
-                    statusButton.setAttribute("aria-pressed", String(isActive));
-                });
+                setActiveStatus(button.dataset.status);
+                loadDay();
             });
         });
 
-        document.querySelectorAll(".habit-row").forEach((button) => {
-            button.addEventListener("click", () => {
-                const isComplete = button.classList.toggle("is-complete");
-                button.setAttribute("aria-pressed", String(isComplete));
-            });
+        document.getElementById("task-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            taskError.hidden = true;
+            const taskName = document.getElementById("task-name");
+            try {
+                const response = await fetch("/api/calendar/tasks", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ taskName: taskName.value, date: selectedDateIso() })
+                });
+                if (!response.ok) throw new Error(`Could not add task (${response.status}).`);
+                taskName.value = "";
+                setActiveStatus("final-day");
+                await loadDay();
+            } catch (error) {
+                taskError.textContent = error.message;
+                taskError.hidden = false;
+            }
+        });
+
+        document.getElementById("save-note").addEventListener("click", async () => {
+            noteError.hidden = true;
+            try {
+                const response = await fetch("/api/calendar/notes", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ date: selectedDateIso(), text: noteInput.value })
+                });
+                if (!response.ok) throw new Error(`Could not save notes (${response.status}).`);
+            } catch (error) {
+                noteError.textContent = error.message;
+                noteError.hidden = false;
+            }
         });
 
         renderMonth();

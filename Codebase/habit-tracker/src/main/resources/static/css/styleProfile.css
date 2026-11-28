@@ -55,6 +55,21 @@
     text-underline-offset: 4px;
 }
 
+.profile-nav-logout {
+    margin: 0;
+}
+
+.profile-nav-logout button {
+    min-height: 38px;
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: #111;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
 .profile-user-icon {
     position: relative;
     display: block;

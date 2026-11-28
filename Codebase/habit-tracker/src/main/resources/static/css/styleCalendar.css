@@ -57,6 +57,21 @@
     text-underline-offset: 4px;
 }
 
+.calendar-header .profile-nav-logout {
+    margin: 0;
+}
+
+.calendar-header .profile-nav-logout button {
+    min-height: 38px;
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: #111;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
 .calendar-header .profile-user-icon {
     position: relative;
     display: block;

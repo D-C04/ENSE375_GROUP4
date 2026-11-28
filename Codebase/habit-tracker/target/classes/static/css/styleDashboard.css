@@ -1,0 +1,420 @@
+* {
+    box-sizing: border-box;
+}
+
+.dashboard-page {
+    --bg: #242222;
+    --surface: #322e30;
+    --line: #5b5055;
+    --ink: #f7f8f9;
+    --muted: #d2c8cc;
+    --accent: #e8a9c2;
+    --accent-ink: #181616;
+    --chip: #59414a;
+    --danger: #ff8a9d;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 1px 24px 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, sans-serif;
+}
+
+.dashboard-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 32px;
+    margin: auto -24px 0;
+    background: #ffdaeb;
+    color: #111;
+    font-size: 16px;
+}
+
+.dashboard-footer-heart {
+    color: #606060;
+    font-size: 20px;
+}
+
+.dashboard-page > h6 {
+    width: min(100%, 1180px);
+    margin: 18px auto 12px;
+    color: var(--ink);
+    font-size: 1rem;
+    text-align: right;
+}
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 64px;
+    margin: 0 -24px;
+    padding: 0 32px;
+    background: #ffdaeb;
+    color: #111;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.dashboard-brand-heart {
+    color: #606060;
+    font-size: 26px;
+}
+
+.dashboard-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-left: auto;
+    font-size: 16px;
+}
+
+.dashboard-nav a {
+    color: #111;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.dashboard-nav a:hover,
+.dashboard-nav a:focus-visible,
+.dashboard-nav a.active {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.dashboard-logout {
+    margin: 0;
+}
+
+.dashboard-logout button {
+    min-height: 38px;
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: #111;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.dashboard-user-icon {
+    position: relative;
+    display: block;
+    width: 30px;
+    height: 30px;
+    margin-left: 12px;
+    border: 2px solid #111;
+    border-radius: 50%;
+}
+
+.dashboard-user-icon::before {
+    position: absolute;
+    top: 5px;
+    left: 8px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #111;
+    content: "";
+}
+
+.dashboard-user-icon::after {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    width: 18px;
+    height: 8px;
+    border-radius: 10px 10px 6px 6px;
+    background: #111;
+    content: "";
+}
+
+.dashboard-page main {
+    flex: 1;
+    width: min(100%, 1180px);
+    max-width: none;
+    margin: 0 auto;
+    padding: 28px 0 40px;
+}
+
+.dashboard-page .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.9fr);
+    align-items: start;
+    gap: 24px;
+}
+
+.dashboard-page #list {
+    min-width: 0;
+}
+
+.dashboard-page #habit-form {
+    min-width: 0;
+    margin: 0;
+    padding: 24px;
+    display: grid;
+    gap: 18px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #ffdaeb;
+    color: #181616;
+}
+
+.dashboard-page #habit-form fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.dashboard-page #habit-form legend,
+.dashboard-page #habit-form label.t {
+    display: block;
+    margin: 0 0 7px;
+    padding: 0;
+    color: #181616;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.dashboard-page #habit-form .row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+}
+
+.dashboard-page #habit-form input[type="text"],
+.dashboard-page #habit-form input[type="date"],
+.dashboard-page #habit-form select {
+    width: 100%;
+    min-height: 44px;
+    padding: 9px 11px;
+    border: 1px solid #82727a;
+    border-radius: 8px;
+    background: #fff;
+    color: #181616;
+    font: inherit;
+}
+
+.dashboard-page #habit-form input:focus-visible,
+.dashboard-page #habit-form select:focus-visible,
+.dashboard-page #habit-form button:focus-visible,
+.dashboard-page .dashboard-nav a:focus-visible,
+.dashboard-page .dashboard-logout button:focus-visible {
+    outline: 3px solid #593442;
+    outline-offset: 2px;
+}
+
+.dashboard-page .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dashboard-page .chip {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.dashboard-page .chip input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.dashboard-page .chip span {
+    padding: 8px 12px;
+    border: 1px solid #82727a;
+    border-radius: 8px;
+    background: #fff;
+    color: #181616;
+}
+
+.dashboard-page .chip input:checked + span {
+    border-color: #593442;
+    background: #593442;
+    color: #fff;
+}
+
+.dashboard-page #habit-form .error {
+    min-height: 1.2em;
+    margin: 0;
+    color: #8c1028;
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+}
+
+.dashboard-page .btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dashboard-page #habit-form button,
+.dashboard-page .button4 {
+    min-height: 42px;
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 8px;
+    background: #242222;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.dashboard-page #habit-form .create {
+    background: #242222;
+    color: #fff;
+    font-weight: 700;
+}
+
+.dashboard-page #habit-form .cancel {
+    background: #fff;
+    color: #181616;
+}
+
+.dashboard-page .habit,
+.dashboard-page .empty {
+    margin-bottom: 12px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--ink);
+}
+
+.dashboard-page .habit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    transition: opacity 0.25s, transform 0.25s;
+}
+
+.dashboard-page .habit.leaving {
+    opacity: 0;
+    transform: translateX(24px);
+}
+
+.dashboard-page .habit.editing {
+    border-color: var(--accent);
+}
+
+.dashboard-page .habit .info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dashboard-page .habit strong {
+    display: block;
+    overflow-wrap: anywhere;
+}
+
+.dashboard-page .habit small {
+    color: var(--muted);
+}
+
+.dashboard-page .actions {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.dashboard-page .habit .done,
+.dashboard-page .habit .ghost {
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ink);
+}
+
+.dashboard-page .habit .done:hover,
+.dashboard-page .habit .ghost:hover,
+.dashboard-page .habit .ghost[data-armed] {
+    background: var(--accent);
+    color: var(--accent-ink);
+}
+
+.dashboard-page .empty {
+    border-style: dashed;
+    color: var(--muted);
+    text-align: center;
+}
+
+@media (max-width: 760px) {
+    .dashboard-page {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+    .dashboard-footer {
+        margin-right: -18px;
+        margin-left: -18px;
+        padding: 0 20px;
+    }
+    .dashboard-header {
+        flex-wrap: wrap;
+        margin-right: -18px;
+        margin-left: -18px;
+        padding: 12px 20px;
+    }
+    .dashboard-nav {
+        order: 1;
+        flex-basis: 100%;
+        justify-content: space-between;
+        gap: 12px;
+        margin-left: 0;
+        overflow-x: auto;
+    }
+    .dashboard-user-icon {
+        margin-left: auto;
+    }
+
+    .dashboard-page main {
+        padding-top: 20px;
+    }
+
+    .dashboard-page .layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-page #habit-form {
+        grid-row: 1;
+    }
+
+    .dashboard-page .button4 {
+        min-height: 38px;
+        padding: 7px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-page #habit-form .row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-page .habit {
+        align-items: flex-start;
+    }
+
+    .dashboard-page .actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-page .habit {
+        transition: none;
+    }
+}

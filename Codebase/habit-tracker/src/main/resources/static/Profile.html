@@ -17,6 +17,9 @@
             <a href="/calendar">Calendar</a>
             <a href="/statistics">Statistics</a>
             <a href="/profile" aria-current="page">Profile</a>
+            <form method="post" action="/logout" class="profile-nav-logout">
+                <button type="submit">Log Out</button>
+            </form>
         </nav>
         <span class="profile-user-icon" aria-hidden="true"></span>
     </header>
@@ -32,9 +35,6 @@
             </div>
 
             <div class="profile-actions">
-                <form method="post" action="/logout">
-                    <button type="submit">Log Out</button>
-                </form>
                 <form method="get" action="/editDetails">
                     <button type="submit">Edit Details</button>
                 </form>
